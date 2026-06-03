@@ -3,89 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telão de Recados - Peso Pena</title>
+    <title>Telão Interativo - Otimizado</title>
     <style>
-        /* Tudo aqui é otimizado para não pesar a memória da TV */
+        /* Fundo verde mantendo a leveza */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle, #1a1a2e 0%, #0f0f1a 100%);
+            background: linear-gradient(135deg, #00c652 0%, #008f3b 100%);
             font-family: 'Arial Black', sans-serif;
-            overflow: hidden; /* Trava a rolagem da tela */
-            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+            display: flex;
+            color: white;
+        }
+
+        /* Lado Esquerdo - Fixo (QR Code e Instruções) */
+        #lado-esquerdo {
+            width: 40%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-right: 4px dashed rgba(255,255,255,0.3);
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        #lado-esquerdo h1 {
+            font-size: 70px;
+            margin: 0 0 20px 0;
+            line-height: 1.1;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }
+        .qr-code-caixa {
+            background: white;
+            padding: 15px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+        .qr-code-caixa img {
+            width: 250px;
+            height: 250px;
+            display: block;
+        }
+        .instrucoes {
+            font-size: 26px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* Lado Direito - Dinâmico (Fotos e Recados) */
+        #lado-direito {
+            width: 60%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            box-sizing: border-box;
         }
         #caixa-recado {
             text-align: center;
-            opacity: 0; /* Começa invisível para o efeito de piscar */
-            transition: opacity 1.5s ease-in-out;
-            max-width: 90%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .foto-cliente {
+            max-width: 450px;
+            max-height: 350px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            margin-bottom: 30px;
+            display: none; /* Fica escondida até alguém mandar uma foto */
+            border: 5px solid white;
+            object-fit: cover;
         }
         .nome-cliente {
-            font-size: 55px;
-            color: #00ffcc; /* Verde neon */
-            text-shadow: 0 0 15px #00ffcc;
-            margin-bottom: 20px;
+            font-size: 45px;
+            color: #ffff00; /* Amarelo neon para chamar atenção */
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            margin-bottom: 15px;
         }
         .texto-recado {
-            font-size: 90px;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-shadow: 0 0 20px #ff007f, 0 0 40px #ff007f; /* Rosa neon */
-        }
-        /* Efeito de coração batendo para dar vida à tela */
-        @keyframes pulso {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
-        }
-        .animacao-pulso {
-            animation: pulso 3s infinite;
+            font-size: 55px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
         }
     </style>
 </head>
 <body>
 
-    <!-- Esta é a área onde a mensagem aparece na tela -->
-    <div id="caixa-recado" class="animacao-pulso">
-        <div class="nome-cliente" id="nome">Carregando...</div>
-        <div class="texto-recado" id="mensagem">Preparando o telão!</div>
+    <!-- Lado Esquerdo Fixo -->
+    <div id="lado-esquerdo">
+        <h1>Mande seu<br>alô!</h1>
+        <div class="qr-code-caixa">
+            <!-- A URL aqui gera o QR Code automático para o seu domínio -->
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://saddlebrown-falcon-486392.hostingersite.com" alt="QR Code">
+        </div>
+        <div class="instrucoes">
+            Aponte a câmera do celular<br>e veja seu recado brilhar no telão
+        </div>
+    </div>
+
+    <!-- Lado Direito Dinâmico -->
+    <div id="lado-direito">
+        <div id="caixa-recado">
+            <!-- A imagem debaixo entra em ação quando o recado tem foto -->
+            <img id="foto" class="foto-cliente" src="" alt="Foto enviada">
+            <div class="nome-cliente" id="nome">Carregando...</div>
+            <div class="texto-recado" id="mensagem">Preparando a tela!</div>
+        </div>
     </div>
 
     <script>
-        // Simulador de recados (Aqui é onde depois conectaremos o seu Banco de Dados)
+        // Simulador de recados com suporte para links de FOTO
         const recados = [
-            { nome: "João Silva", texto: "Manda um abraço pra mesa 4!" },
-            { nome: "Maria", texto: "O show tá bom demais!" },
-            { nome: "Galera do Fundão", texto: "Toca aquela moda antiga!" },
-            { nome: "Marcos", texto: "Aniversário da Ana hoje, manda parabéns!" }
+            { nome: "João Silva", texto: "Manda um abraço pra mesa 4!", foto: "" },
+            { nome: "Aline", texto: "Olha a galera curtindo demais!", foto: "https://dummyimage.com/450x350/ff007f/ffffff.jpg&text=FOTO+DA+GALERA" },
+            { nome: "Fã Clube", texto: "Vandinho Voz canta muito hoje!!", foto: "" },
+            { nome: "Marcos", texto: "Aniversário da Ana, chama pro palco!", foto: "https://dummyimage.com/450x350/0000ff/ffffff.jpg&text=FOTO+DO+ANIVERSARIANTE" }
         ];
 
         let contador = 0;
         const caixa = document.getElementById('caixa-recado');
         const campoNome = document.getElementById('nome');
         const campoMensagem = document.getElementById('mensagem');
+        const campoFoto = document.getElementById('foto');
 
         function girarTelao() {
-            // Apaga a mensagem atual lentamente
+            // Apaga a tela para trocar o recado
             caixa.style.opacity = 0;
 
             setTimeout(() => {
-                // Prepara a próxima mensagem no escuro
-                if(contador >= recados.length) contador = 0; // Se acabar, recomeça
+                if(contador >= recados.length) contador = 0;
                 
-                campoNome.innerText = recados[contador].nome + " mandou:";
-                campoMensagem.innerText = '"' + recados[contador].texto + '"';
+                const recadoAtual = recados[contador];
                 
-                // Acende a nova mensagem na tela
+                campoNome.innerText = recadoAtual.nome + " mandou:";
+                campoMensagem.innerText = '"' + recadoAtual.texto + '"';
+                
+                // LÓGICA DA FOTO: Se o cliente mandou foto, ela aparece. Se não, esconde.
+                if(recadoAtual.foto !== "") {
+                    campoFoto.src = recadoAtual.foto;
+                    campoFoto.style.display = "block"; 
+                } else {
+                    campoFoto.style.display = "none"; 
+                }
+                
+                // Acende a tela com o recado novo
                 caixa.style.opacity = 1;
                 contador++;
-            }, 1500); // Tempo que a tela fica apagada entre um recado e outro
+            }, 1000); 
         }
 
-        // Troca de recado automaticamente a cada 8 segundos
-        setInterval(girarTelao, 8000);
-        
-        // Puxa a primeira mensagem logo que a TV liga
-        setTimeout(girarTelao, 1000);
+        // Troca os recados a cada 9 segundos
+        setInterval(girarTelao, 9000);
+        setTimeout(girarTelao, 500);
     </script>
 
 </body>
