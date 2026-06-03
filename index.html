@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telão Interativo - Design Original</title>
+    <title>Telão Interativo - Max e Uniforme</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #00c652; /* Fundo verde contínuo */
+            background: #00c652; /* Fundo base verde vibrante */
             font-family: 'Nunito', sans-serif;
             overflow: hidden;
             display: flex;
             color: white;
         }
 
-        /* ----- LADO ESQUERDO ----- */
+        /* ----- LADO ESQUERDO (Com Degradê e Sombra divisória) ----- */
         #lado-esquerdo {
             width: 35%;
             height: 100%;
@@ -27,42 +27,48 @@
             padding: 40px;
             box-sizing: border-box;
             text-align: center;
+            /* O Degradê e a Sombra que dividem a tela */
+            background: linear-gradient(145deg, #009940 0%, #00b14f 100%);
+            box-shadow: 20px 0 50px rgba(0,0,0,0.4);
+            z-index: 10;
         }
         
         @keyframes piscar {
             0% { opacity: 1; }
-            50% { opacity: 0.5; }
+            50% { opacity: 0.6; }
             100% { opacity: 1; }
         }
         .titulo-animado {
-            font-size: 60px;
+            font-size: 75px; /* Ainda maior */
             font-weight: 900;
             line-height: 1.1;
-            margin-bottom: 30px;
-            animation: piscar 2.5s infinite ease-in-out;
-            color: #e6ffe6;
+            margin-bottom: 40px;
+            animation: piscar 2s infinite ease-in-out;
+            color: #d1ffd4;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
         }
 
         .qr-code-caixa {
             background: white;
-            padding: 15px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+            border-radius: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
         .qr-code-caixa img {
-            width: 250px;
-            height: 250px;
+            width: 280px;
+            height: 280px;
             display: block;
         }
 
         .instrucoes {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 700;
-            color: #e6ffe6;
+            color: #d1ffd4;
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
         }
 
-        /* ----- LADO DIREITO (Widget Flutuante) ----- */
+        /* ----- LADO DIREITO (Aproveitamento Máximo) ----- */
         #lado-direito {
             width: 65%;
             height: 100%;
@@ -70,87 +76,101 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            z-index: 1;
         }
 
         #estado-vazio {
             text-align: center;
             opacity: 1;
         }
-        #estado-vazio h2 { font-size: 45px; margin-bottom: 5px; }
-        #estado-vazio p { font-size: 22px; color: #e6ffe6; }
+        #estado-vazio h2 { font-size: 55px; margin-bottom: 10px; }
+        #estado-vazio p { font-size: 28px; color: #e6ffe6; }
 
-        /* Container que segura a foto e a mensagem juntos no meio da tela */
+        /* Container Travado para não pular */
         .widget-central {
-            width: 80%;
-            max-width: 650px;
-            display: none; /* Escondido até carregar o recado */
+            width: 92%; /* Ocupa quase todo o espaço disponível */
+            height: 85vh; /* Altura travada! */
+            display: none;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
+            transition: opacity 0.8s ease-in-out;
         }
 
+        /* Área da foto com altura fixa */
         .foto-container {
             width: 100%;
-            height: 350px; 
-            border-radius: 25px;
+            height: 55vh; /* Trava o tamanho da foto */
+            border-radius: 30px;
             overflow: hidden;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             position: relative;
             z-index: 1;
-            background: #111;
+            background: #000;
         }
         .foto-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* A foto preenche o bloco sem amassar */
         }
 
-        /* Bolha roxa do mesmo tamanho da foto, flutuando embaixo */
+        /* Bolha roxa gigante e padronizada */
         .bolha-roxa {
-            background: #9333ea; /* Roxo original */
+            background: #9333ea;
             width: 100%;
-            border-radius: 25px;
-            padding: 40px 30px 30px 30px;
+            min-height: 25vh; /* Altura mínima garantida para o texto */
+            border-radius: 30px;
+            padding: 50px 40px 40px 40px;
             box-sizing: border-box;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-            margin-top: -15px; /* Sobrepõe levemente a foto */
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            margin-top: -30px; /* Encaixe perfeito em cima da foto */
             position: relative;
             z-index: 2;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* A etiqueta que fica no meio termo entre a foto e o roxo */
+        /* Etiqueta idêntica à da sua foto (fundo lilás claro) */
         .etiqueta-topo {
             position: absolute;
-            top: -22px;
+            top: -25px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(255, 255, 255, 0.25);
-            padding: 8px 25px;
-            border-radius: 30px;
-            font-size: 22px;
-            font-weight: 700;
-            backdrop-filter: blur(8px);
+            background: #b678f2; /* Roxo claro */
+            padding: 10px 30px;
+            border-radius: 40px;
+            font-size: 26px;
+            font-weight: 900;
             white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         .etiqueta-valor {
-            margin-left: 10px;
-            opacity: 0.9;
+            background: rgba(0,0,0,0.15); /* Fundo sutil para o preço */
+            padding: 3px 15px;
+            border-radius: 20px;
+            font-size: 24px;
         }
 
         .texto-recado {
-            font-size: 45px;
+            font-size: 55px; /* Texto bem maior */
             font-weight: 900;
             margin: 0;
-            line-height: 1.2;
+            line-height: 1.3;
         }
     </style>
 </head>
 <body>
 
     <div id="lado-esquerdo">
-        <div class="titulo-animado">mande seu<br>alô!</div>
+        <div class="titulo-animado">🎵 mande seu<br>alô!</div>
         <div class="qr-code-caixa">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://saddlebrown-falcon-486392.hostingersite.com" alt="QR Code">
         </div>
@@ -166,13 +186,13 @@
 
         <div class="widget-central" id="estado-mensagem">
             <div class="foto-container" id="caixa-foto">
-                <img id="foto" src="" alt="">
+                <img id="foto" src="" alt="Foto Cliente">
             </div>
             
             <div class="bolha-roxa">
                 <div class="etiqueta-topo">
                     <span id="nome">Carregando...</span> 
-                    <span class="etiqueta-valor" id="valor"></span>
+                    <span id="container-valor"><span class="etiqueta-valor" id="valor"></span></span>
                 </div>
                 <p class="texto-recado" id="mensagem"></p>
             </div>
@@ -181,11 +201,10 @@
     </div>
 
     <script>
-        // Simulador de recados exatamente como nos seus testes
         const recados = [
             { nome: "Vanessa", valor: "R$ 5.00", texto: "Oi tô amando o show", foto: "https://images.unsplash.com/photo-1540039155732-d68a52bc371c?q=80&w=1000&auto=format&fit=crop" },
             { nome: "João Silva", valor: "R$ 10.00", texto: "Manda um abraço pra mesa 4!", foto: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000&auto=format&fit=crop" },
-            { nome: "Equipe", valor: "", texto: "Mensagem sem foto para testar o layout!", foto: "" } 
+            { nome: "Equipe", valor: "", texto: "Mensagem gigante ocupando o espaço sem a foto, alinhada e perfeitamente no centro!", foto: "" } 
         ];
 
         let contador = 0;
@@ -194,6 +213,7 @@
         
         const campoNome = document.getElementById('nome');
         const campoValor = document.getElementById('valor');
+        const containerValor = document.getElementById('container-valor');
         const campoMensagem = document.getElementById('mensagem');
         const campoFoto = document.getElementById('foto');
         const caixaFoto = document.getElementById('caixa-foto');
@@ -207,9 +227,18 @@
                 const recadoAtual = recados[contador];
                 
                 campoNome.innerText = recadoAtual.nome;
-                campoValor.innerText = recadoAtual.valor ? recadoAtual.valor : "";
+                
+                // Lógica para esconder o valor se não tiver
+                if(recadoAtual.valor) {
+                    campoValor.innerText = recadoAtual.valor;
+                    containerValor.style.display = "inline";
+                } else {
+                    containerValor.style.display = "none";
+                }
+                
                 campoMensagem.innerText = '"' + recadoAtual.texto + '"';
                 
+                // Exibe ou esconde a caixa da foto sem desmontar a tela
                 if(recadoAtual.foto !== "") {
                     campoFoto.src = recadoAtual.foto;
                     caixaFoto.style.display = "block"; 
@@ -225,7 +254,7 @@
                 }, 50);
 
                 contador++;
-            }, 1000); 
+            }, 800); 
         }
 
         setTimeout(() => {
