@@ -3,265 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telão Interativo - Max e Uniforme</title>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap" rel="stylesheet">
-    
+    <title>Questionário de Avaliação - Porteiro e Vigia</title>
     <style>
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background: #00c652; /* Fundo base verde vibrante */
-            font-family: 'Nunito', sans-serif;
-            overflow: hidden;
-            display: flex;
-            color: white;
-        }
-
-        /* ----- LADO ESQUERDO (Com Degradê e Sombra divisória) ----- */
-        #lado-esquerdo {
-            width: 35%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            box-sizing: border-box;
-            text-align: center;
-            /* O Degradê e a Sombra que dividem a tela */
-            background: linear-gradient(145deg, #009940 0%, #00b14f 100%);
-            box-shadow: 20px 0 50px rgba(0,0,0,0.4);
-            z-index: 10;
-        }
-        
-        @keyframes piscar {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-        .titulo-animado {
-            font-size: 75px; /* Ainda maior */
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 40px;
-            animation: piscar 2s infinite ease-in-out;
-            color: #d1ffd4;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.2);
-        }
-
-        .qr-code-caixa {
-            background: white;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
             padding: 20px;
-            border-radius: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            margin: 0;
         }
-        .qr-code-caixa img {
-            width: 280px;
-            height: 280px;
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #0056b3;
+            margin: 0 0 10px 0;
+        }
+        .header p {
+            color: #666;
+            margin: 0;
+        }
+        .instructions {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 5px solid #ffeeba;
+            margin-bottom: 30px;
+        }
+        .question-block {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .question-title {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        .option {
+            display: block;
+            margin-bottom: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+        .option:hover {
+            background-color: #f8f9fa;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        #result-container {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+            animation: fadeIn 0.5s;
+        }
+        .aprovado {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .reprovado {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .feedback {
+            font-size: 0.8em;
+            font-weight: normal;
+            margin-top: 10px;
             display: block;
         }
-
-        .instrucoes {
-            font-size: 28px;
-            font-weight: 700;
-            color: #d1ffd4;
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.2);
-        }
-
-        /* ----- LADO DIREITO (Aproveitamento Máximo) ----- */
-        #lado-direito {
-            width: 65%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-
-        #estado-vazio {
-            text-align: center;
-            opacity: 1;
-        }
-        #estado-vazio h2 { font-size: 55px; margin-bottom: 10px; }
-        #estado-vazio p { font-size: 28px; color: #e6ffe6; }
-
-        /* Container Travado para não pular */
-        .widget-central {
-            width: 92%; /* Ocupa quase todo o espaço disponível */
-            height: 85vh; /* Altura travada! */
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.8s ease-in-out;
-        }
-
-        /* Área da foto com altura fixa */
-        .foto-container {
-            width: 100%;
-            height: 55vh; /* Trava o tamanho da foto */
-            border-radius: 30px;
-            overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
-            background: #000;
-        }
-        .foto-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* A foto preenche o bloco sem amassar */
-        }
-
-        /* Bolha roxa gigante e padronizada */
-        .bolha-roxa {
-            background: #9333ea;
-            width: 100%;
-            min-height: 25vh; /* Altura mínima garantida para o texto */
-            border-radius: 30px;
-            padding: 50px 40px 40px 40px;
-            box-sizing: border-box;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            margin-top: -30px; /* Encaixe perfeito em cima da foto */
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Etiqueta idêntica à da sua foto (fundo lilás claro) */
-        .etiqueta-topo {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #b678f2; /* Roxo claro */
-            padding: 10px 30px;
-            border-radius: 40px;
-            font-size: 26px;
-            font-weight: 900;
-            white-space: nowrap;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            color: white;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .etiqueta-valor {
-            background: rgba(0,0,0,0.15); /* Fundo sutil para o preço */
-            padding: 3px 15px;
-            border-radius: 20px;
-            font-size: 24px;
-        }
-
-        .texto-recado {
-            font-size: 55px; /* Texto bem maior */
-            font-weight: 900;
-            margin: 0;
-            line-height: 1.3;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <div id="lado-esquerdo">
-        <div class="titulo-animado">🎵 mande seu<br>alô!</div>
-        <div class="qr-code-caixa">
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://saddlebrown-falcon-486392.hostingersite.com" alt="QR Code">
-        </div>
-        <div class="instrucoes">Aponte a câmera do celular<br>e veja seu recado brilhar no telão!</div>
+<div class="container">
+    <div class="header">
+        <h1>Avaliação: Porteiro e Vigia</h1>
+        <p>Área do Aluno - Prime Cursos</p>
     </div>
 
-    <div id="lado-direito">
-        
-        <div id="estado-vazio">
-            <h2>Nenhum recado ainda</h2>
-            <p>Seja o primeiro a mandar o seu!</p>
-        </div>
-
-        <div class="widget-central" id="estado-mensagem">
-            <div class="foto-container" id="caixa-foto">
-                <img id="foto" src="" alt="Foto Cliente">
-            </div>
-            
-            <div class="bolha-roxa">
-                <div class="etiqueta-topo">
-                    <span id="nome">Carregando...</span> 
-                    <span id="container-valor"><span class="etiqueta-valor" id="valor"></span></span>
-                </div>
-                <p class="texto-recado" id="mensagem"></p>
-            </div>
-        </div>
-
+    <div class="instructions">
+        <strong>Instruções:</strong> Esta avaliação vale nota! Responda as questões abaixo com calma e atenção. Cada questão possui apenas uma resposta válida. A nota mínima para aprovação é de 70% (7 acertos).
     </div>
 
-    <script>
-        const recados = [
-            { nome: "Vanessa", valor: "R$ 5.00", texto: "Oi tô amando o show", foto: "https://images.unsplash.com/photo-1540039155732-d68a52bc371c?q=80&w=1000&auto=format&fit=crop" },
-            { nome: "João Silva", valor: "R$ 10.00", texto: "Manda um abraço pra mesa 4!", foto: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1000&auto=format&fit=crop" },
-            { nome: "Equipe", valor: "", texto: "Mensagem gigante ocupando o espaço sem a foto, alinhada e perfeitamente no centro!", foto: "" } 
-        ];
+    <form id="quizForm">
+        <!-- Questão 1 -->
+        <div class="question-block">
+            <div class="question-title">Questão 1: Qual das seguintes afirmações melhor descreve a responsabilidade do porteiro em relação ao uso dos elevadores?</div>
+            <label class="option"><input type="radio" name="q1" value="0" required> O porteiro deve operar manualmente os elevadores em todos os momentos.</label>
+            <label class="option"><input type="radio" name="q1" value="1"> É responsável por fiscalizar e controlar o uso adequado dos elevadores social e de serviço.</label>
+            <label class="option"><input type="radio" name="q1" value="0"> Não deve intervir ou monitorar o uso dos elevadores sob qualquer circunstância.</label>
+        </div>
 
-        let contador = 0;
-        const estadoVazio = document.getElementById('estado-vazio');
-        const estadoMensagem = document.getElementById('estado-mensagem');
+        <!-- Questão 2 -->
+        <div class="question-block">
+            <div class="question-title">Questão 2: O que é essencial para a função do porteiro em relação ao atendimento aos condôminos?</div>
+            <label class="option"><input type="radio" name="q2" value="0" required> Ignorar as solicitações para manter a privacidade.</label>
+            <label class="option"><input type="radio" name="q2" value="1"> Atender com educação e prestar as informações solicitadas.</label>
+            <label class="option"><input type="radio" name="q2" value="0"> Limitar a comunicação para evitar excesso de interação.</label>
+        </div>
+
+        <!-- Questão 3 -->
+        <div class="question-block">
+            <div class="question-title">Questão 3: Como o porteiro deve agir em relação à entrega de mercadorias no edifício?</div>
+            <label class="option"><input type="radio" name="q3" value="0" required> Deve aceitar todas as entregas sem verificar a identificação.</label>
+            <label class="option"><input type="radio" name="q3" value="1"> Deve encaminhar diretamente ao morador ou verificar previamente conforme instruções.</label>
+            <label class="option"><input type="radio" name="q3" value="0"> Tem a liberdade de rejeitar entregas baseado em seu próprio critério.</label>
+        </div>
+
+        <!-- Questão 4 -->
+        <div class="question-block">
+            <div class="question-title">Questão 4: Qual destas é uma prática recomendada para porteiros ao receber visitantes não conhecidos?</div>
+            <label class="option"><input type="radio" name="q4" value="0" required> Acompanhar visitantes desconhecidos até o destino solicitado.</label>
+            <label class="option"><input type="radio" name="q4" value="0"> Permitir a entrada sem qualquer verificação.</label>
+            <label class="option"><input type="radio" name="q4" value="1"> Solicitar que o visitante aguarde fora até ser verificado.</label>
+        </div>
+
+        <!-- Questão 5 -->
+        <div class="question-block">
+            <div class="question-title">Questão 5: O que os porteiros devem fazer se observarem qualquer irregularidade no edifício?</div>
+            <label class="option"><input type="radio" name="q5" value="0" required> Resolver o problema por conta própria imediatamente.</label>
+            <label class="option"><input type="radio" name="q5" value="0"> Ignorar, a menos que seja muito grave.</label>
+            <label class="option"><input type="radio" name="q5" value="1"> Reportar ao zelador todas as irregularidades observadas.</label>
+        </div>
+
+        <!-- Questão 6 -->
+        <div class="question-block">
+            <div class="question-title">Questão 6: Que tipo de comportamento é esperado de um porteiro em relação à vigilância das áreas externas do edifício?</div>
+            <label class="option"><input type="radio" name="q6" value="1" required> Vigilância severa, evitando agrupamentos e mantendo a ordem.</label>
+            <label class="option"><input type="radio" name="q6" value="0"> Observar casualmente sem interferir.</label>
+            <label class="option"><input type="radio" name="q6" value="0"> Focar apenas no interior do edifício, ignorando as áreas externas.</label>
+        </div>
+
+        <!-- Questão 7 -->
+        <div class="question-block">
+            <div class="question-title">Questão 7: Qual é a recomendação para um porteiro quando há entrega de mercadorias para o condomínio?</div>
+            <label class="option"><input type="radio" name="q7" value="0" required> Receber sem verificar os detalhes da entrega.</label>
+            <label class="option"><input type="radio" name="q7" value="0"> Deixar a mercadoria na entrada para ser recolhida pelo zelador.</label>
+            <label class="option"><input type="radio" name="q7" value="1"> Conferir a mercadoria com a nota fiscal antes de aceitar.</label>
+        </div>
+
+        <!-- Questão 8 -->
+        <div class="question-block">
+            <div class="question-title">Questão 8: Como deve ser a postura do porteiro em relação às suas próprias apresentações pessoais?</div>
+            <label class="option"><input type="radio" name="q8" value="0" required> Manter uma aparência casual, conforme seu conforto.</label>
+            <label class="option"><input type="radio" name="q8" value="1"> Apresentar-se sempre bem, com uniforme limpo e adequado.</label>
+            <label class="option"><input type="radio" name="q8" value="0"> Usar qualquer vestimenta que esteja disponível, independentemente de ser formal.</label>
+        </div>
+
+        <!-- Questão 9 -->
+        <div class="question-block">
+            <div class="question-title">Questão 9: Qual é a ação apropriada para um porteiro se um condômino reporta uma situação suspeita?</div>
+            <label class="option"><input type="radio" name="q9" value="0" required> Investigar pessoalmente antes de tomar qualquer medida.</label>
+            <label class="option"><input type="radio" name="q9" value="0"> Ignorar, a menos que tenha evidências claras.</label>
+            <label class="option"><input type="radio" name="q9" value="1"> Informar imediatamente ao síndico ou à autoridade policial, se necessário.</label>
+        </div>
+
+        <!-- Questão 10 -->
+        <div class="question-block">
+            <div class="question-title">Questão 10: Qual das seguintes é uma responsabilidade do porteiro ao lidar com a distribuição de correspondência?</div>
+            <label class="option"><input type="radio" name="q10" value="1" required> Distribuir imediatamente após a entrega, verificando a identidade do destinatário.</label>
+            <label class="option"><input type="radio" name="q10" value="0"> Armazenar correspondências até que o destinatário solicite.</label>
+            <label class="option"><input type="radio" name="q10" value="0"> Ignorar detalhes e entregar sem verificar.</label>
+        </div>
+
+        <div class="btn-container">
+            <button type="submit">Enviar Respostas (Finalizar)</button>
+        </div>
+    </form>
+
+    <div id="result-container">
+        <span id="result-text"></span>
+        <span class="feedback" id="result-feedback"></span>
+    </div>
+
+</div>
+
+<script>
+    document.getElementById('quizForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Evita que a página recarregue
+
+        let score = 0;
+        const totalQuestions = 10;
+        const formData = new FormData(this);
         
-        const campoNome = document.getElementById('nome');
-        const campoValor = document.getElementById('valor');
-        const containerValor = document.getElementById('container-valor');
-        const campoMensagem = document.getElementById('mensagem');
-        const campoFoto = document.getElementById('foto');
-        const caixaFoto = document.getElementById('caixa-foto');
-
-        function girarTelao() {
-            estadoMensagem.style.opacity = 0;
-
-            setTimeout(() => {
-                if(contador >= recados.length) contador = 0;
-                
-                const recadoAtual = recados[contador];
-                
-                campoNome.innerText = recadoAtual.nome;
-                
-                // Lógica para esconder o valor se não tiver
-                if(recadoAtual.valor) {
-                    campoValor.innerText = recadoAtual.valor;
-                    containerValor.style.display = "inline";
-                } else {
-                    containerValor.style.display = "none";
-                }
-                
-                campoMensagem.innerText = '"' + recadoAtual.texto + '"';
-                
-                // Exibe ou esconde a caixa da foto sem desmontar a tela
-                if(recadoAtual.foto !== "") {
-                    campoFoto.src = recadoAtual.foto;
-                    caixaFoto.style.display = "block"; 
-                } else {
-                    caixaFoto.style.display = "none"; 
-                }
-                
-                estadoVazio.style.display = "none";
-                estadoMensagem.style.display = "flex";
-                
-                setTimeout(() => {
-                    estadoMensagem.style.opacity = 1;
-                }, 50);
-
-                contador++;
-            }, 800); 
+        // Conta os acertos
+        for(let i = 1; i <= totalQuestions; i++) {
+            const answer = formData.get('q' + i);
+            if (answer === '1') {
+                score++;
+            }
         }
 
-        setTimeout(() => {
-            setInterval(girarTelao, 8000); 
-            girarTelao(); 
-        }, 3000);
-    </script>
+        // Calcula a porcentagem
+        const percentage = (score / totalQuestions) * 100;
 
+        // Exibe o resultado
+        const resultContainer = document.getElementById('result-container');
+        const resultText = document.getElementById('result-text');
+        const resultFeedback = document.getElementById('result-feedback');
+
+        resultContainer.style.display = 'block';
+
+        if (score >= 7) {
+            resultContainer.className = 'aprovado';
+            resultText.innerText = 'PARABÉNS! VOCÊ FOI APROVADO.';
+            resultFeedback.innerText = `Você acertou ${score} de ${totalQuestions} questões (${percentage}%).`;
+        } else {
+            resultContainer.className = 'reprovado';
+            resultText.innerText = 'INFELIZMENTE VOCÊ FOI REPROVADO.';
+            resultFeedback.innerText = `Você acertou ${score} de ${totalQuestions} questões (${percentage}%). A média para aprovação é 70%.`;
+        }
+        
+        // Rola a página para mostrar o resultado
+        resultContainer.scrollIntoView({ behavior: 'smooth' });
+    });
+</script>
 </body>
 </html>
