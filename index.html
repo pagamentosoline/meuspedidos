@@ -126,8 +126,7 @@
             </div>
             
             <div class="card">
-                <!-- Imagem em Base64 quebrada trocada por placeholder visual -->
-                <img src="https://via.placeholder.com/300x200?text=Falta+Link+Mesa+Ferro+8" alt="Jogo Ferro 8">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdsLcBgkeQcuFiTfTwVsrcijXsQgy_wH_-Nx05pY-LYg&s=10" alt="Jogo Ferro 8">
                 <h3>Jogo Mesa Ferro Redonda + 8 Cadeiras</h3>
                 <div class="preco">R$ 70,00</div>
                 <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 8 Lugares', 70.00)">Adicionar</button>
@@ -136,7 +135,6 @@
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYtMrmMX5aVFhVTx6IKhBt_kKknoEP1sTdHw488hSEg&s=10" alt="Jogo Ferro 4">
                 <h3>Jogo Mesa Ferro Redonda + 4 Cadeiras</h3>
-                <!-- Assumi um valor intermediário, ajuste conforme o seu catálogo -->
                 <div class="preco">R$ 40,00</div> 
                 <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 4 Lugares', 40.00)">Adicionar</button>
             </div>
@@ -199,7 +197,7 @@
 
     <!-- Modal do Carrinho -->
     <div id="meuModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" id="conteudo-modal">
             <span class="fechar-modal" onclick="fecharModal()">&times;</span>
             <h2>Resumo do Pedido</h2>
             
@@ -234,7 +232,6 @@
                 <input type="text" id="cli-whats" placeholder="(22) 99999-9999">
             </div>
             
-            <!-- Novos Campos de Data e Hora -->
             <div class="grid-2-cols">
                 <div class="form-group">
                     <label>Data do Evento</label>
@@ -267,15 +264,22 @@
                 <label>Cidade</label>
                 <input type="text" value="Campos dos Goytacazes" readonly>
             </div>
+
+            <div class="form-group">
+                <label>Forma de Pagamento</label>
+                <select id="cli-pagamento">
+                    <option value="100% Antecipado (PIX)">100% Antecipado via PIX agora</option>
+                    <option value="50% Agora e 50% na Entrega">Pagar 50% via PIX agora e 50% na entrega</option>
+                </select>
+            </div>
             
-            <button class="btn-whats" onclick="enviarPedidoWhatsApp()">Finalizar no WhatsApp</button>
+            <button class="btn-whats" onclick="enviarPedidoWhatsApp()">Finalizar Pedido</button>
         </div>
     </div>
 
     <script>
         let carrinho = [];
 
-        // Controle do Modal
         const modal = document.getElementById("meuModal");
         function abrirModal() { modal.style.display = "block"; }
         function fecharModal() { modal.style.display = "none"; }
@@ -340,7 +344,6 @@
             return { subtotal, desconto, frete, freteGratis, totalFinal };
         }
 
-        // Formatação de data simples YYYY-MM-DD para DD/MM/YYYY
         function formatarData(dataString) {
             if(!dataString) return 'Não informada';
             const partes = dataString.split('-');
@@ -355,8 +358,11 @@
 
             const nome = document.getElementById('cli-nome').value;
             const rua = document.getElementById('cli-rua').value;
+            const whats = document.getElementById('cli-whats').value;
             const dataEvento = document.getElementById('cli-data').value;
             const horaEvento = document.getElementById('cli-hora').value;
+            const cep = document.getElementById('cli-cep').value;
+            const opcaoPagamento = document.getElementById('cli-pagamento').value;
             
             if (!nome || !rua) {
                 alert("Por favor, preencha pelo menos seu Nome e Rua para entrega.");
@@ -367,10 +373,14 @@
             const areaNome = areaSelect.options[areaSelect.selectedIndex].text;
             const valores = calcularValores();
 
+            // Montando a mensagem com todos os dados
             let msg = `*NOVO PEDIDO DE ALUGUEL* 🥳\n\n`;
             msg += `*Cliente:* ${nome}\n`;
+            msg += `*WhatsApp do Cliente:* ${whats}\n`;
             msg += `*Data do Evento:* ${formatarData(dataEvento)} às ${horaEvento || 'Não informado'}\n`;
-            msg += `*Endereço:* ${rua} - Campos dos Goytacazes\n`;
+            msg += `*Endereço:* ${rua}\n`;
+            msg += `*CEP:* ${cep || 'Não informado'}\n`;
+            msg += `*Cidade:* Campos dos Goytacazes\n`;
             msg += `*Região:* ${areaNome}\n\n`;
             msg += `*Itens Selecionados:*\n`;
             
@@ -386,13 +396,36 @@
                 msg += `\n*Frete:* R$ ${valores.frete.toFixed(2)}`;
             }
             
-            msg += `\n\n*TOTAL A PAGAR:* R$ ${valores.totalFinal.toFixed(2)}\n\n`;
-            msg += `Aguardo a chave PIX para confirmar a reserva!`;
+            msg += `\n\n*TOTAL:* R$ ${valores.totalFinal.toFixed(2)}`;
+            msg += `\n*Forma de Pagamento:* ${opcaoPagamento}`;
+            msg += `\n*Status:* pagamento pendente`;
 
-            const numeroSeuWhatsApp = "5522999999999"; // Lembre-se de mudar aqui
-            const link = `https://wa.me/${numeroSeuWhatsApp}?text=${encodeURIComponent(msg)}`;
+            // Envio para a API TextMeBot
+            const apiUrl = `https://api.textmebot.com/send.php?recipient=+5522992195418&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(msg)}`;
             
-            window.open(link, '_blank');
+            fetch(apiUrl)
+                .then(response => {
+                    console.log("Mensagem enviada para a API com sucesso!");
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar para a API:", error);
+                });
+
+            // Exibindo a mensagem de sucesso na tela para o cliente
+            const conteudoModal = document.getElementById('conteudo-modal');
+            conteudoModal.innerHTML = `
+                <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+                <div style="text-align: center; padding: 40px 15px;">
+                    <h2 style="color: #27ae60; font-size: 2em; margin-bottom: 10px;">✅ Pedido Concluído!</h2>
+                    <p style="font-size: 1.2em; color: #333; margin-bottom: 20px;">Seu pedido foi registrado com sucesso.</p>
+                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #3498db; margin-bottom: 25px;">
+                        <p style="font-size: 1.1em; margin: 0; color: #2c3e50;">
+                            Você receberá o resumo do seu pedido e o <strong>código PIX</strong> pelo WhatsApp em instantes.
+                        </p>
+                    </div>
+                    <button class="btn-whats" style="width: 100%;" onclick="location.reload()">Voltar ao Catálogo</button>
+                </div>
+            `;
         }
     </script>
 </body>
