@@ -98,7 +98,7 @@
 
     <header>
         <h1>Aluguel para Festas</h1>
-        <p id="subtitulo-cidade">Catálogo Completo - Carregando...</p>
+        <p id="subtitulo-cidade">Catálogo Completo</p>
     </header>
 
     <div class="container">
@@ -244,23 +244,25 @@
             </div>
 
             <div class="form-group">
-                <label>Área de Entrega</label>
-                <select id="cli-area" onchange="calcularValores()">
-                    <option value="0">Retirar no local (Grátis)</option>
-                    <option value="40">Frete Fixo - R$ 40,00</option>
-                </select>
+                <label>CEP</label>
+                <!-- O oninput ativa a busca mágica assim que o cliente digitar 8 números -->
+                <input type="text" id="cli-cep" placeholder="28000-000" oninput="buscarCEP()">
             </div>
             <div class="form-group">
-                <label>CEP</label>
-                <input type="text" id="cli-cep" placeholder="28000-000">
+                <label>Cidade</label>
+                <input type="text" id="cli-cidade" placeholder="Preencha o CEP primeiro" readonly>
             </div>
             <div class="form-group">
                 <label>Rua e Número</label>
                 <input type="text" id="cli-rua" placeholder="Ex: Rua Direita, 123">
             </div>
+
             <div class="form-group">
-                <label>Cidade</label>
-                <input type="text" id="cli-cidade" value="Carregando..." readonly>
+                <label>Área de Entrega</label>
+                <select id="cli-area" onchange="calcularValores()">
+                    <option value="0">Retirar no local (Grátis)</option>
+                    <!-- A opção de frete vai aparecer magicamente aqui depois da busca do CEP -->
+                </select>
             </div>
 
             <div class="form-group">
@@ -276,19 +278,42 @@
     </div>
 
     <script>
-        // Descobrir a cidade do usuário automaticamente via IP
-        fetch('https://ipapi.co/json/')
-            .then(response => response.json())
-            .then(data => {
-                const cidadeVisitante = data.city || "Sua Cidade";
-                document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${cidadeVisitante}`;
-                document.getElementById('cli-cidade').value = cidadeVisitante;
-            })
-            .catch(error => {
-                console.log("Erro ao obter localização", error);
-                document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo`;
-                document.getElementById('cli-cidade').value = "Não identificada";
-            });
+        // Função Mágica do ViaCEP
+        function buscarCEP() {
+            let cepInput = document.getElementById('cli-cep').value;
+            let cepLimpo = cepInput.replace(/\D/g, ''); // Remove traços e letras
+            
+            if (cepLimpo.length === 8) {
+                document.getElementById('cli-cidade').value = "Buscando...";
+                
+                fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            // Preenche os campos
+                            document.getElementById('cli-cidade').value = `${data.localidade} - ${data.uf}`;
+                            document.getElementById('cli-rua').value = `${data.logradouro},  - ${data.bairro}`;
+                            document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${data.localidade}`;
+                            
+                            // Adiciona a opção de frete baseada na cidade
+                            const areaSelect = document.getElementById('cli-area');
+                            areaSelect.innerHTML = `
+                                <option value="0">Retirar no local (Grátis)</option>
+                                <option value="40" selected>Entrega em ${data.localidade} - R$ 40,00</option>
+                            `;
+                            
+                            // Recalcula o total agora que o frete foi selecionado
+                            calcularValores();
+                        } else {
+                            document.getElementById('cli-cidade').value = "CEP não encontrado";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erro ao buscar CEP", error);
+                        document.getElementById('cli-cidade').value = "";
+                    });
+            }
+        }
 
         let carrinho = [];
 
@@ -377,8 +402,8 @@
             const cidade = document.getElementById('cli-cidade').value;
             const opcaoPagamento = document.getElementById('cli-pagamento').value;
             
-            if (!nome || !rua) {
-                alert("Por favor, preencha pelo menos seu Nome e Rua para entrega.");
+            if (!nome || !rua || !cep) {
+                alert("Por favor, preencha seu Nome, CEP e Rua.");
                 return;
             }
 
@@ -392,7 +417,7 @@
             msg += `*WhatsApp do Cliente:* ${whats}\n`;
             msg += `*Data do Evento:* ${formatarData(dataEvento)} às ${horaEvento || 'Não informado'}\n`;
             msg += `*Endereço:* ${rua}\n`;
-            msg += `*CEP:* ${cep || 'Não informado'}\n`;
+            msg += `*CEP:* ${cep}\n`;
             msg += `*Cidade:* ${cidade}\n`;
             msg += `*Opção de Entrega:* ${areaNome}\n\n`;
             msg += `*Itens Selecionados:*\n`;
