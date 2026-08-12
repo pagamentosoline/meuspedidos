@@ -353,7 +353,7 @@
             }
         }
 
-        // Função do ViaCEP atualizada para puxar o Bairro no frete
+        // Função do ViaCEP que busca o bairro/cidade com base SOMENTE no CEP
         function buscarCEP() {
             let cepInput = document.getElementById('cli-cep').value;
             let cepLimpo = cepInput.replace(/\D/g, ''); 
@@ -369,7 +369,6 @@
                             document.getElementById('cli-rua').value = `${data.logradouro},  - ${data.bairro}`;
                             document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${data.localidade}`;
                             
-                            // Define se usa o bairro ou a cidade caso o bairro venha vazio
                             const localEntrega = data.bairro ? data.bairro : data.localidade;
                             
                             const areaSelect = document.getElementById('cli-area');
@@ -390,20 +389,6 @@
             }
         }
 
-        // Descobrir a cidade do usuário via IP (mantido igual)
-        fetch('https://ipapi.co/json/')
-            .then(response => response.json())
-            .then(data => {
-                const cidadeVisitante = data.city || "Sua Cidade";
-                document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${cidadeVisitante}`;
-                document.getElementById('cli-cidade').value = cidadeVisitante;
-            })
-            .catch(error => {
-                console.log("Erro ao obter localização", error);
-                document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo`;
-                document.getElementById('cli-cidade').value = "Não identificada";
-            });
-
         let carrinho = [];
 
         const modal = document.getElementById("meuModal");
@@ -414,7 +399,6 @@
         function adicionarAoCarrinho(nome, preco, idInputQtd) {
             let qtd = parseInt(document.getElementById(idInputQtd).value);
             
-            // Verifica se o item já existe no carrinho para somar a quantidade
             let itemExistente = carrinho.find(item => item.nome === nome);
             if (itemExistente) {
                 itemExistente.qtd += qtd;
@@ -422,15 +406,28 @@
                 carrinho.push({ nome, preco, qtd });
             }
             
-            // Atualiza a bolinha laranja com o total de itens (somando quantidades)
             let totalItens = carrinho.reduce((acc, item) => acc + item.qtd, 0);
             document.getElementById('qtd-itens-badge').innerText = totalItens;
             
             atualizarCarrinhoHTML();
             calcularValores();
             
-            // Reseta a quantidade da vitrine para 1 após adicionar
             document.getElementById(idInputQtd).value = 1;
+
+            // ==========================================
+            // NOVA NOTIFICAÇÃO DE ADIÇÃO AO CARRINHO
+            // ==========================================
+            let msgNotificacao = `*ALERTA DE CARRINHO* 🛒\n\nUm cliente acabou de adicionar o seguinte item ao carrinho:\n✅ ${qtd}x ${nome}`;
+            let apiUrlNotificacao = `https://api.textmebot.com/send.php?recipient=+5522997069053&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(msgNotificacao)}`;
+            
+            fetch(apiUrlNotificacao)
+                .then(response => {
+                    console.log("Notificação de carrinho enviada!");
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar notificação de carrinho:", error);
+                });
+            // ==========================================
         }
 
         function atualizarCarrinhoHTML() {
@@ -453,7 +450,6 @@
         }
 
         function calcularValores() {
-            // Multiplica o preço de cada item pela sua respectiva quantidade
             let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
             let desconto = 0;
             let frete = parseFloat(document.getElementById('cli-area').value) || 0;
@@ -544,8 +540,10 @@
             msg += `\n*Forma de Pagamento:* ${opcaoPagamento}`;
             msg += `\n*Status:* pagamento pendente`;
 
-            // Envio para a API TextMeBot
-            const apiUrl = `https://api.textmebot.com/send.php?recipient=+5522992195418&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(msg)}`;
+            // ==========================================
+            // ALTERAÇÃO DO NÚMERO DE DESTINO DO PEDIDO
+            // ==========================================
+            const apiUrl = `https://api.textmebot.com/send.php?recipient=+5522997069053&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(msg)}`;
             
             fetch(apiUrl)
                 .then(response => {
