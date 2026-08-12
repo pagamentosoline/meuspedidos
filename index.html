@@ -40,6 +40,14 @@
         .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background-color: #ddd; }
         .card h3 { font-size: 1.1em; margin: 10px 0; min-height: 45px; }
         .preco { font-size: 1.3em; color: #2c3e50; font-weight: bold; margin: 10px 0; }
+        
+        /* Controles de Quantidade */
+        .controle-qtd { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; gap: 8px; }
+        .btn-qtd { background-color: #ecf0f1; border: none; padding: 6px 12px; font-size: 1.2em; border-radius: 5px; cursor: pointer; color: #2c3e50; font-weight: bold; }
+        .btn-qtd:hover { background-color: #bdc3c7; }
+        .input-qtd { width: 40px; text-align: center; border: 1px solid #ccc; border-radius: 5px; padding: 6px; font-size: 1em; font-weight: bold; -moz-appearance: textfield; }
+        .input-qtd::-webkit-outer-spin-button, .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
         .btn-add { background-color: #3498db; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; font-size: 1em; margin-top: auto; }
         .btn-add:hover { background-color: #2980b9; }
         
@@ -110,46 +118,81 @@
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK6GjaWrv5q1w_nIL-3gnFeHJwhfFgOsdOsyNNd29eYg&s=10" alt="Jogo de mesa plástico">
                 <h3>Jogo de Mesa Plástico c/ 4 Cadeiras</h3>
                 <div class="preco">R$ 10,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Plástico 4 Cadeiras', 10.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-1', -1)">-</button>
+                    <input type="number" id="qtd-1" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-1', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Plástico 4 Cadeiras', 10.00, 'qtd-1')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://images.tcdn.com.br/img/img_prod/836117/mesa_de_plastico_pt_monobloco_quadrada_arqplast_6437_1_795f1b37a133604caca1cdc3ae4991ca.png" alt="Mesa plástico avulsa">
                 <h3>Mesa de Plástico Individual</h3>
                 <div class="preco">R$ 5,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa Plástico Individual', 5.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-2', -1)">-</button>
+                    <input type="number" id="qtd-2" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-2', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa Plástico Individual', 5.00, 'qtd-2')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhqFmdrSqunTm8I63-MviU0M5RFLrVeQTJ2ghyn9hPDg&s" alt="Cadeira Plástico">
                 <h3>Cadeira Plástico Individual</h3>
                 <div class="preco">R$ 2,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Cadeira Plástico Individual', 2.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-3', -1)">-</button>
+                    <input type="number" id="qtd-3" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-3', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Cadeira Plástico Individual', 2.00, 'qtd-3')">Adicionar</button>
             </div>
             
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdsLcBgkeQcuFiTfTwVsrcijXsQgy_wH_-Nx05pY-LYg&s=10" alt="Jogo Ferro 8">
                 <h3>Jogo Mesa Ferro Redonda + 8 Cadeiras</h3>
                 <div class="preco">R$ 70,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 8 Lugares', 70.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-4', -1)">-</button>
+                    <input type="number" id="qtd-4" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-4', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 8 Lugares', 70.00, 'qtd-4')">Adicionar</button>
             </div>
             
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYtMrmMX5aVFhVTx6IKhBt_kKknoEP1sTdHw488hSEg&s=10" alt="Jogo Ferro 4">
                 <h3>Jogo Mesa Ferro Redonda + 4 Cadeiras</h3>
                 <div class="preco">R$ 40,00</div> 
-                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 4 Lugares', 40.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-5', -1)">-</button>
+                    <input type="number" id="qtd-5" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-5', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 4 Lugares', 40.00, 'qtd-5')">Adicionar</button>
             </div>
             
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGScdd9OaFYo0nV-_kBlFkfum_Ugexv0vNfcSBgKINKA&s=10" alt="Cadeira Ferro">
                 <h3>Cadeira de Ferro<br>(Unidade)</h3>
                 <div class="preco">R$ 8,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Cadeira de Ferro', 8.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-6', -1)">-</button>
+                    <input type="number" id="qtd-6" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-6', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Cadeira de Ferro', 8.00, 'qtd-6')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQLRl6b_Qj0LcpxoWi7vVXlOC8PhDMUqTqK6OtcrQLGWriWOoP52lRiuK5zUn7tC9dcGVHv26k1fOXQcjyn8NEIefwQxeASW0pcqUE_os7WAS64KqU4ET5_YQ&usqp=CAc" alt="Forros de Mesa">
                 <h3>Forros de Mesa<br>(Unidade)</h3>
                 <div class="preco">R$ 5,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Forro de Mesa', 5.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-7', -1)">-</button>
+                    <input type="number" id="qtd-7" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-7', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Forro de Mesa', 5.00, 'qtd-7')">Adicionar</button>
             </div>
         </div>
 
@@ -160,31 +203,56 @@
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsf1qL0DnoEFJI4P2aypXNN9OyceR5iewaWPg9aCORvA&s=10" alt="Karaokê">
                 <h3>Máquina de Karaokê</h3>
                 <div class="preco">R$ 150,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Máquina de Karaokê', 150.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-8', -1)">-</button>
+                    <input type="number" id="qtd-8" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-8', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Máquina de Karaokê', 150.00, 'qtd-8')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpGWE2dZaIrrsVa1mQjd5RkmD40NC5QlxynmQeZiQtvw&s=10" alt="Sinuca">
                 <h3>Mesa de Sinuca</h3>
                 <div class="preco">R$ 100,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa de Sinuca', 100.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-9', -1)">-</button>
+                    <input type="number" id="qtd-9" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-9', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa de Sinuca', 100.00, 'qtd-9')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRApympl4hnYRasqSWjbVMmRzZZ7jw57fvRNFrFE_V_Og&s=10" alt="Totó">
                 <h3>Mesa de Totó (Pebolim)</h3>
                 <div class="preco">R$ 80,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa de Totó', 80.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-10', -1)">-</button>
+                    <input type="number" id="qtd-10" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-10', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa de Totó', 80.00, 'qtd-10')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT40skwMwnNogO3Zo61yJ3ZBPrXfJPjzT1ibv-wGj2s7g&s=10" alt="Tobogã">
                 <h3>Tobogã Inflável</h3>
                 <div class="preco">R$ 300,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Tobogã Inflável', 300.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-11', -1)">-</button>
+                    <input type="number" id="qtd-11" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-11', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Tobogã Inflável', 300.00, 'qtd-11')">Adicionar</button>
             </div>
             <div class="card">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNbr0obdm_DitkW7JRI1uKI9tUffN8PJglzWtS--84Pw&s=10" alt="Pula Pula">
                 <h3>Pula Pula (Cama Elástica)</h3>
                 <div class="preco">R$ 180,00</div>
-                <button class="btn-add" onclick="adicionarAoCarrinho('Pula Pula', 180.00)">Adicionar</button>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-12', -1)">-</button>
+                    <input type="number" id="qtd-12" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-12', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Pula Pula', 180.00, 'qtd-12')">Adicionar</button>
             </div>
         </div>
 
@@ -245,7 +313,6 @@
 
             <div class="form-group">
                 <label>CEP</label>
-                <!-- O oninput ativa a busca mágica assim que o cliente digitar 8 números -->
                 <input type="text" id="cli-cep" placeholder="28000-000" oninput="buscarCEP()">
             </div>
             <div class="form-group">
@@ -261,7 +328,6 @@
                 <label>Área de Entrega</label>
                 <select id="cli-area" onchange="calcularValores()">
                     <option value="0">Retirar no local (Grátis)</option>
-                    <!-- A opção de frete vai aparecer magicamente aqui depois da busca do CEP -->
                 </select>
             </div>
 
@@ -278,10 +344,19 @@
     </div>
 
     <script>
-        // Função Mágica do ViaCEP
+        // Função para aumentar ou diminuir a quantidade no card
+        function mudarQtd(idInput, valor) {
+            let input = document.getElementById(idInput);
+            let novaQtd = parseInt(input.value) + valor;
+            if(novaQtd >= 1) {
+                input.value = novaQtd;
+            }
+        }
+
+        // Função do ViaCEP atualizada para puxar o Bairro no frete
         function buscarCEP() {
             let cepInput = document.getElementById('cli-cep').value;
-            let cepLimpo = cepInput.replace(/\D/g, ''); // Remove traços e letras
+            let cepLimpo = cepInput.replace(/\D/g, ''); 
             
             if (cepLimpo.length === 8) {
                 document.getElementById('cli-cidade').value = "Buscando...";
@@ -290,19 +365,19 @@
                     .then(response => response.json())
                     .then(data => {
                         if (!data.erro) {
-                            // Preenche os campos
                             document.getElementById('cli-cidade').value = `${data.localidade} - ${data.uf}`;
                             document.getElementById('cli-rua').value = `${data.logradouro},  - ${data.bairro}`;
                             document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${data.localidade}`;
                             
-                            // Adiciona a opção de frete baseada na cidade
+                            // Define se usa o bairro ou a cidade caso o bairro venha vazio
+                            const localEntrega = data.bairro ? data.bairro : data.localidade;
+                            
                             const areaSelect = document.getElementById('cli-area');
                             areaSelect.innerHTML = `
                                 <option value="0">Retirar no local (Grátis)</option>
-                                <option value="40" selected>Entrega em ${data.localidade} - R$ 40,00</option>
+                                <option value="40" selected>Entrega em ${localEntrega} - R$ 40,00</option>
                             `;
                             
-                            // Recalcula o total agora que o frete foi selecionado
                             calcularValores();
                         } else {
                             document.getElementById('cli-cidade').value = "CEP não encontrado";
@@ -315,6 +390,20 @@
             }
         }
 
+        // Descobrir a cidade do usuário via IP (mantido igual)
+        fetch('https://ipapi.co/json/')
+            .then(response => response.json())
+            .then(data => {
+                const cidadeVisitante = data.city || "Sua Cidade";
+                document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${cidadeVisitante}`;
+                document.getElementById('cli-cidade').value = cidadeVisitante;
+            })
+            .catch(error => {
+                console.log("Erro ao obter localização", error);
+                document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo`;
+                document.getElementById('cli-cidade').value = "Não identificada";
+            });
+
         let carrinho = [];
 
         const modal = document.getElementById("meuModal");
@@ -322,11 +411,26 @@
         function fecharModal() { modal.style.display = "none"; }
         window.onclick = function(event) { if (event.target == modal) { fecharModal(); } }
 
-        function adicionarAoCarrinho(nome, preco) {
-            carrinho.push({ nome, preco });
-            document.getElementById('qtd-itens-badge').innerText = carrinho.length;
+        function adicionarAoCarrinho(nome, preco, idInputQtd) {
+            let qtd = parseInt(document.getElementById(idInputQtd).value);
+            
+            // Verifica se o item já existe no carrinho para somar a quantidade
+            let itemExistente = carrinho.find(item => item.nome === nome);
+            if (itemExistente) {
+                itemExistente.qtd += qtd;
+            } else {
+                carrinho.push({ nome, preco, qtd });
+            }
+            
+            // Atualiza a bolinha laranja com o total de itens (somando quantidades)
+            let totalItens = carrinho.reduce((acc, item) => acc + item.qtd, 0);
+            document.getElementById('qtd-itens-badge').innerText = totalItens;
+            
             atualizarCarrinhoHTML();
             calcularValores();
+            
+            // Reseta a quantidade da vitrine para 1 após adicionar
+            document.getElementById(idInputQtd).value = 1;
         }
 
         function atualizarCarrinhoHTML() {
@@ -337,10 +441,11 @@
                 divItens.innerHTML = '<p style="color: #7f8c8d;">Nenhum item adicionado.</p>';
             } else {
                 carrinho.forEach(item => {
+                    let totalItem = item.preco * item.qtd;
                     divItens.innerHTML += `
                         <div class="item-carrinho">
-                            <span>${item.nome}</span>
-                            <span>R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                            <span>${item.qtd}x ${item.nome}</span>
+                            <span>R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
                         </div>
                     `;
                 });
@@ -348,9 +453,10 @@
         }
 
         function calcularValores() {
-            let subtotal = carrinho.reduce((acc, item) => acc + item.preco, 0);
+            // Multiplica o preço de cada item pela sua respectiva quantidade
+            let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
             let desconto = 0;
-            let frete = parseFloat(document.getElementById('cli-area').value);
+            let frete = parseFloat(document.getElementById('cli-area').value) || 0;
             let freteGratis = false;
 
             if (subtotal >= 500 && frete > 0) {
@@ -411,7 +517,6 @@
             const areaNome = areaSelect.options[areaSelect.selectedIndex].text;
             const valores = calcularValores();
 
-            // Montando a mensagem com todos os dados
             let msg = `*NOVO PEDIDO DE ALUGUEL* 🥳\n\n`;
             msg += `*Cliente:* ${nome}\n`;
             msg += `*WhatsApp do Cliente:* ${whats}\n`;
@@ -423,7 +528,8 @@
             msg += `*Itens Selecionados:*\n`;
             
             carrinho.forEach(item => {
-                msg += `✅ ${item.nome} - R$ ${item.preco.toFixed(2)}\n`;
+                let totalItem = item.preco * item.qtd;
+                msg += `✅ ${item.qtd}x ${item.nome} - R$ ${totalItem.toFixed(2)}\n`;
             });
 
             msg += `\n*Subtotal:* R$ ${valores.subtotal.toFixed(2)}`;
@@ -449,7 +555,6 @@
                     console.error("Erro ao enviar para a API:", error);
                 });
 
-            // Exibindo a mensagem de sucesso na tela para o cliente
             const conteudoModal = document.getElementById('conteudo-modal');
             conteudoModal.innerHTML = `
                 <span class="fechar-modal" onclick="fecharModal()">&times;</span>
