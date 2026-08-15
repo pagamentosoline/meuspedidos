@@ -3,178 +3,572 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questionário de Avaliação - Porteiro e Vigia</title>
+    <title>Aluguel para Festas</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; line-height: 1.6; padding: 10px; margin: 0; }
-        .container { max-width: 600px; margin: 0 auto; background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header { text-align: center; border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-bottom: 20px; }
-        .header h1 { color: #0056b3; margin: 0 0 10px 0; font-size: 1.5em; }
-        .instructions { background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; font-size: 0.9em; margin-bottom: 20px; }
-        .question-block { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-        .question-title { font-weight: 600; font-size: 1.05em; margin-bottom: 10px; color: #2c3e50; }
-        .option { display: block; margin-bottom: 8px; cursor: pointer; padding: 8px; background: #f9f9f9; border-radius: 5px; }
-        .option:hover { background-color: #f1f1f1; }
-        button { background-color: #0056b3; color: white; border: none; padding: 15px; width: 100%; font-size: 1.1em; border-radius: 5px; cursor: pointer; }
-        #result-container { display: none; text-align: center; margin-top: 20px; padding: 20px; border-radius: 8px; font-weight: bold; }
-        .aprovado { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .reprovado { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        #certificado-section { display: none; margin-top: 20px; padding-top: 20px; border-top: 2px dashed #c3e6cb; text-align: left; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-weight: bold; }
-        .input-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .aviso-taxa { color: #d9534f; font-weight: bold; background-color: #f2dede; padding: 15px; border-radius: 5px; border: 1px solid #ebccd1; margin-bottom: 15px; font-size: 1.1em; text-align: center; }
-        .pix-code-box { width: 100%; height: 80px; padding: 10px; font-family: monospace; font-size: 0.9em; background: #fff; margin: 10px 0; border: 1px solid #ccc; box-sizing: border-box; }
-        .btn-copiar { background-color: #17a2b8; width: 100%; color: white; border: none; padding: 15px; cursor: pointer; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 0; padding: 0; padding-bottom: 80px; }
+        
+        /* Banner Fixo e Piscando no Topo */
+        .banner-ofertas {
+            position: sticky;
+            top: 0;
+            z-index: 1001;
+            background-color: #27ae60;
+            color: white;
+            text-align: center;
+            padding: 12px;
+            font-weight: bold;
+            font-size: 1.1em;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .texto-piscando {
+            animation: piscar 1.5s infinite;
+        }
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        header { background-color: #1a252f; color: white; text-align: center; padding: 20px 0; }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .categoria-titulo { border-bottom: 2px solid #3498db; padding-bottom: 10px; margin-top: 40px; color: #2c3e50; }
+        
+        .produtos { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 20px; }
+        
+        .card { background: white; border-radius: 10px; padding: 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; background-color: #ddd; }
+        .card h3 { font-size: 1.1em; margin: 10px 0; min-height: 45px; }
+        .preco { font-size: 1.3em; color: #2c3e50; font-weight: bold; margin: 10px 0; }
+        
+        /* Controles de Quantidade */
+        .controle-qtd { display: flex; align-items: center; justify-content: center; margin-bottom: 10px; gap: 8px; }
+        .btn-qtd { background-color: #ecf0f1; border: none; padding: 6px 12px; font-size: 1.2em; border-radius: 5px; cursor: pointer; color: #2c3e50; font-weight: bold; }
+        .btn-qtd:hover { background-color: #bdc3c7; }
+        .input-qtd { width: 40px; text-align: center; border: 1px solid #ccc; border-radius: 5px; padding: 6px; font-size: 1em; font-weight: bold; -moz-appearance: textfield; }
+        .input-qtd::-webkit-outer-spin-button, .input-qtd::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+        .btn-add { background-color: #3498db; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; font-size: 1em; margin-top: auto; }
+        .btn-add:hover { background-color: #2980b9; }
+        
+        /* Botão Carrinho Flutuante */
+        .btn-flutuante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #e67e22;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-flutuante:hover { background-color: #d35400; }
+        .badge { background: white; color: #e67e22; padding: 2px 8px; border-radius: 20px; font-size: 0.9em; }
+
+        /* Modal do Carrinho */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); }
+        .modal-content { background-color: #fff; margin: 5vh auto; padding: 25px; border-radius: 15px; width: 90%; max-width: 500px; max-height: 85vh; overflow-y: auto; position: relative; }
+        .fechar-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; font-weight: bold; cursor: pointer; color: #aaa; }
+        .fechar-modal:hover { color: #333; }
+
+        .item-carrinho { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .resumo-valores { margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .linha-valor { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .destaque-desconto { color: #27ae60; font-weight: bold; }
+        .total { font-size: 1.3em; font-weight: bold; color: #1a252f; border-top: 2px solid #ddd; padding-top: 10px; margin-top: 10px; }
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; font-size: 0.9em; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .form-group input[readonly] { background-color: #e9ecef; color: #6c757d; }
+        
+        /* Grid para Data e Hora */
+        .grid-2-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .btn-whats { background-color: #25D366; color: white; border: none; padding: 15px; width: 100%; border-radius: 5px; font-size: 1.1em; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-whats:hover { background-color: #1ebd5a; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header"><h1>Avaliação: Porteiro e Vigia</h1></div>
-    <div class="instructions">Esta avaliação vale nota! A nota mínima para aprovação é de 70% (7 acertos).</div>
+    <!-- Banner Fixo e Piscando -->
+    <div class="banner-ofertas">
+        <span class="texto-piscando">🎣 Acima de R$ 500 FRETE GRÁTIS! &nbsp;|&nbsp; 🎉 Acima de R$ 1.500 ganhe 30% DE DESCONTO!</span>
+    </div>
 
-    <form id="quizForm">
-        <!-- Questão 1 -->
-        <div class="question-block"><div class="question-title">Questão 1: Qual das seguintes afirmações melhor descreve a responsabilidade do porteiro em relação ao uso dos elevadores?</div>
-        <label class="option"><input type="radio" name="q1" value="0" required> O porteiro deve operar manualmente os elevadores em todos os momentos.</label>
-        <label class="option"><input type="radio" name="q1" value="1"> É responsável por fiscalizar e controlar o uso adequado dos elevadores social e de serviço.</label>
-        <label class="option"><input type="radio" name="q1" value="0"> Não deve intervir ou monitorar o uso dos elevadores sob qualquer circunstância.</label></div>
+    <header>
+        <h1>Aluguel para Festas</h1>
+        <p id="subtitulo-cidade">Catálogo Completo</p>
+    </header>
 
-        <!-- Questão 2 -->
-        <div class="question-block"><div class="question-title">Questão 2: O que é essencial para a função do porteiro em relação ao atendimento aos condôminos?</div>
-        <label class="option"><input type="radio" name="q2" value="0" required> Ignorar as solicitações para manter a privacidade.</label>
-        <label class="option"><input type="radio" name="q2" value="1"> Atender com educação e prestar as informações solicitadas.</label>
-        <label class="option"><input type="radio" name="q2" value="0"> Limitar a comunicação para evitar excesso de interação.</label></div>
-
-        <!-- Questão 3 -->
-        <div class="question-block"><div class="question-title">Questão 3: Como o porteiro deve agir em relação à entrega de mercadorias no edifício?</div>
-        <label class="option"><input type="radio" name="q3" value="0" required> Deve aceitar todas as entregas sem verificar a identificação.</label>
-        <label class="option"><input type="radio" name="q3" value="1"> Deve encaminhar diretamente ao morador ou verificar previamente conforme instruções.</label>
-        <label class="option"><input type="radio" name="q3" value="0"> Tem a liberdade de rejeitar entregas baseado em seu próprio critério.</label></div>
-
-        <!-- Questão 4 -->
-        <div class="question-block"><div class="question-title">Questão 4: Qual destas é uma prática recomendada para porteiros ao receber visitantes não conhecidos?</div>
-        <label class="option"><input type="radio" name="q4" value="0" required> Acompanhar visitantes desconhecidos até o destino solicitado.</label>
-        <label class="option"><input type="radio" name="q4" value="0"> Permitir a entrada sem qualquer verificação.</label>
-        <label class="option"><input type="radio" name="q4" value="1"> Solicitar que o visitante aguarde fora até ser verificado.</label></div>
-
-        <!-- Questão 5 -->
-        <div class="question-block"><div class="question-title">Questão 5: O que os porteiros devem fazer se observarem qualquer irregularidade no edifício?</div>
-        <label class="option"><input type="radio" name="q5" value="0" required> Resolver o problema por conta própria imediatamente.</label>
-        <label class="option"><input type="radio" name="q5" value="0"> Ignorar, a menos que seja muito grave.</label>
-        <label class="option"><input type="radio" name="q5" value="1"> Reportar ao zelador todas as irregularidades observadas.</label></div>
-
-        <!-- Questão 6 -->
-        <div class="question-block"><div class="question-title">Questão 6: Que tipo de comportamento é esperado de um porteiro em relação à vigilância das áreas externas do edifício?</div>
-        <label class="option"><input type="radio" name="q6" value="1" required> Vigilância severa, evitando agrupamentos e mantendo a ordem.</label>
-        <label class="option"><input type="radio" name="q6" value="0"> Observar casualmente sem interferir.</label>
-        <label class="option"><input type="radio" name="q6" value="0"> Focar apenas no interior do edifício, ignorando as áreas externas.</label></div>
-
-        <!-- Questão 7 -->
-        <div class="question-block"><div class="question-title">Questão 7: Qual é a recomendação para um porteiro quando há entrega de mercadorias para o condomínio?</div>
-        <label class="option"><input type="radio" name="q7" value="0" required> Receber sem verificar os detalhes da entrega.</label>
-        <label class="option"><input type="radio" name="q7" value="0"> Deixar a mercadoria na entrada para ser recolhida pelo zelador.</label>
-        <label class="option"><input type="radio" name="q7" value="1"> Conferir a mercadoria com a nota fiscal antes de aceitar.</label></div>
-
-        <!-- Questão 8 -->
-        <div class="question-block"><div class="question-title">Questão 8: Como deve ser a postura do porteiro em relação às suas próprias apresentações pessoais?</div>
-        <label class="option"><input type="radio" name="q8" value="0" required> Manter uma aparência casual, conforme seu conforto.</label>
-        <label class="option"><input type="radio" name="q8" value="1"> Apresentar-se sempre bem, com uniforme limpo e adequado.</label>
-        <label class="option"><input type="radio" name="q8" value="0"> Usar qualquer vestimenta que esteja disponível, independentemente de ser formal.</label></div>
-
-        <!-- Questão 9 -->
-        <div class="question-block"><div class="question-title">Questão 9: Qual é a ação apropriada para um porteiro se um condômino reporta uma situação suspeita?</div>
-        <label class="option"><input type="radio" name="q9" value="0" required> Investigar pessoalmente antes de tomar qualquer medida.</label>
-        <label class="option"><input type="radio" name="q9" value="0"> Ignorar, a menos que tenha evidências claras.</label>
-        <label class="option"><input type="radio" name="q9" value="1"> Informar imediatamente ao síndico ou à autoridade policial, se necessário.</label></div>
-
-        <!-- Questão 10 -->
-        <div class="question-block"><div class="question-title">Questão 10: Qual das seguintes é uma responsabilidade do porteiro ao lidar com a distribuição de correspondência?</div>
-        <label class="option"><input type="radio" name="q10" value="1" required> Distribuir imediatamente após a entrega, verificando a identidade do destinatário.</label>
-        <label class="option"><input type="radio" name="q10" value="0"> Armazenar correspondências até que o destinatário solicite.</label>
-        <label class="option"><input type="radio" name="q10" value="0"> Ignorar detalhes e entregar sem verificar.</label></div>
-
-        <button type="submit">Enviar Respostas</button>
-    </form>
-
-    <div id="result-container">
-        <span id="result-text"></span>
-        <div id="certificado-section">
-            <div id="form-dados-certificado">
-                <h3>Emitir Certificado</h3>
-                <div class="input-group"><label>Nome Completo</label><input type="text" id="aluno-nome" required></div>
-                <div class="input-group"><label>CPF</label><input type="text" id="aluno-cpf" placeholder="000.000.000-00" required></div>
-                <div class="input-group"><label>Data de Nascimento</label><input type="date" id="aluno-nascimento" required></div>
-                <div class="input-group"><label>E-mail ou WhatsApp</label><input type="text" id="aluno-contato" required></div>
-                <button type="button" style="background:#28a745" onclick="gerarCertificado()">Emitir Certificado</button>
+    <div class="container">
+        
+        <!-- Categoria 1: Mesas e Cadeiras -->
+        <h2 class="categoria-titulo">Mesas e Cadeiras</h2>
+        <div class="produtos">
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTK6GjaWrv5q1w_nIL-3gnFeHJwhfFgOsdOsyNNd29eYg&s=10" alt="Jogo de mesa plástico">
+                <h3>Jogo de Mesa Plástico c/ 4 Cadeiras</h3>
+                <div class="preco">R$ 10,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-1', -1)">-</button>
+                    <input type="number" id="qtd-1" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-1', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Plástico 4 Cadeiras', 10.00, 'qtd-1')">Adicionar</button>
             </div>
-            <div id="pix-section" style="display: none;">
-                <div class="aviso-taxa">Para receber o certificado imediatamente, realize o pagamento da taxa de emissão via PIX. Após a confirmação, o certificado será enviado para o contato informado.</div>
-                <textarea id="pix-code" class="pix-code-box" readonly>00020101021226850014br.gov.bcb.pix2563pix.santander.com.br/qr/v2/0e720447-527c-41d5-818f-1e4b9dcf3282520400005303986540570.005802BR5906SHOPEE6009SAO PAULO62070503***63049FA3</textarea>
-                <button type="button" class="btn-copiar" onclick="copiarPix()">Copiar Código PIX</button>
+            <div class="card">
+                <img src="https://images.tcdn.com.br/img/img_prod/836117/mesa_de_plastico_pt_monobloco_quadrada_arqplast_6437_1_795f1b37a133604caca1cdc3ae4991ca.png" alt="Mesa plástico avulsa">
+                <h3>Mesa de Plástico Individual</h3>
+                <div class="preco">R$ 5,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-2', -1)">-</button>
+                    <input type="number" id="qtd-2" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-2', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa Plástico Individual', 5.00, 'qtd-2')">Adicionar</button>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhqFmdrSqunTm8I63-MviU0M5RFLrVeQTJ2ghyn9hPDg&s" alt="Cadeira Plástico">
+                <h3>Cadeira Plástico Individual</h3>
+                <div class="preco">R$ 2,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-3', -1)">-</button>
+                    <input type="number" id="qtd-3" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-3', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Cadeira Plástico Individual', 2.00, 'qtd-3')">Adicionar</button>
+            </div>
+            
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdsLcBgkeQcuFiTfTwVsrcijXsQgy_wH_-Nx05pY-LYg&s=10" alt="Jogo Ferro 8">
+                <h3>Jogo Mesa Ferro Redonda + 8 Cadeiras</h3>
+                <div class="preco">R$ 70,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-4', -1)">-</button>
+                    <input type="number" id="qtd-4" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-4', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 8 Lugares', 70.00, 'qtd-4')">Adicionar</button>
+            </div>
+            
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWYtMrmMX5aVFhVTx6IKhBt_kKknoEP1sTdHw488hSEg&s=10" alt="Jogo Ferro 4">
+                <h3>Jogo Mesa Ferro Redonda + 4 Cadeiras</h3>
+                <div class="preco">R$ 40,00</div> 
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-5', -1)">-</button>
+                    <input type="number" id="qtd-5" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-5', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Jogo Mesa Ferro 4 Lugares', 40.00, 'qtd-5')">Adicionar</button>
+            </div>
+            
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGScdd9OaFYo0nV-_kBlFkfum_Ugexv0vNfcSBgKINKA&s=10" alt="Cadeira Ferro">
+                <h3>Cadeira de Ferro<br>(Unidade)</h3>
+                <div class="preco">R$ 8,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-6', -1)">-</button>
+                    <input type="number" id="qtd-6" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-6', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Cadeira de Ferro', 8.00, 'qtd-6')">Adicionar</button>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQLRl6b_Qj0LcpxoWi7vVXlOC8PhDMUqTqK6OtcrQLGWriWOoP52lRiuK5zUn7tC9dcGVHv26k1fOXQcjyn8NEIefwQxeASW0pcqUE_os7WAS64KqU4ET5_YQ&usqp=CAc" alt="Forros de Mesa">
+                <h3>Forros de Mesa<br>(Unidade)</h3>
+                <div class="preco">R$ 5,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-7', -1)">-</button>
+                    <input type="number" id="qtd-7" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-7', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Forro de Mesa', 5.00, 'qtd-7')">Adicionar</button>
             </div>
         </div>
+
+        <!-- Categoria 2: Jogos e Diversão -->
+        <h2 class="categoria-titulo">Jogos e Diversão</h2>
+        <div class="produtos">
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsf1qL0DnoEFJI4P2aypXNN9OyceR5iewaWPg9aCORvA&s=10" alt="Karaokê">
+                <h3>Máquina de Karaokê</h3>
+                <div class="preco">R$ 150,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-8', -1)">-</button>
+                    <input type="number" id="qtd-8" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-8', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Máquina de Karaokê', 150.00, 'qtd-8')">Adicionar</button>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpGWE2dZaIrrsVa1mQjd5RkmD40NC5QlxynmQeZiQtvw&s=10" alt="Sinuca">
+                <h3>Mesa de Sinuca</h3>
+                <div class="preco">R$ 100,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-9', -1)">-</button>
+                    <input type="number" id="qtd-9" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-9', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa de Sinuca', 100.00, 'qtd-9')">Adicionar</button>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRApympl4hnYRasqSWjbVMmRzZZ7jw57fvRNFrFE_V_Og&s=10" alt="Totó">
+                <h3>Mesa de Totó (Pebolim)</h3>
+                <div class="preco">R$ 80,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-10', -1)">-</button>
+                    <input type="number" id="qtd-10" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-10', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Mesa de Totó', 80.00, 'qtd-10')">Adicionar</button>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT40skwMwnNogO3Zo61yJ3ZBPrXfJPjzT1ibv-wGj2s7g&s=10" alt="Tobogã">
+                <h3>Tobogã Inflável</h3>
+                <div class="preco">R$ 300,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-11', -1)">-</button>
+                    <input type="number" id="qtd-11" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-11', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Tobogã Inflável', 300.00, 'qtd-11')">Adicionar</button>
+            </div>
+            <div class="card">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNbr0obdm_DitkW7JRI1uKI9tUffN8PJglzWtS--84Pw&s=10" alt="Pula Pula">
+                <h3>Pula Pula (Cama Elástica)</h3>
+                <div class="preco">R$ 180,00</div>
+                <div class="controle-qtd">
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-12', -1)">-</button>
+                    <input type="number" id="qtd-12" class="input-qtd" value="1" min="1" readonly>
+                    <button class="btn-qtd" onclick="mudarQtd('qtd-12', 1)">+</button>
+                </div>
+                <button class="btn-add" onclick="adicionarAoCarrinho('Pula Pula', 180.00, 'qtd-12')">Adicionar</button>
+            </div>
+        </div>
+
     </div>
-</div>
 
-<script>
-    let porcentagemAtual = 0; // Variável global para acessar a nota na hora de gerar o certificado
+    <!-- Botão Flutuante -->
+    <button class="btn-flutuante" onclick="abrirModal()">
+        🛒 Ver Pedido <span class="badge" id="qtd-itens-badge">0</span>
+    </button>
 
-    document.getElementById('quizForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        let score = 0;
-        const formData = new FormData(this);
-        for(let i=1; i<=10; i++) if(formData.get('q'+i) === '1') score++;
-        const pct = (score/10)*100;
-        porcentagemAtual = pct; // Salva a nota
-        
-        const res = document.getElementById('result-container');
-        res.style.display = 'block';
-        if(score >= 7) {
-            res.className = 'aprovado';
-            document.getElementById('result-text').innerHTML = `PARABÉNS! APROVADO.<br>Nota: ${pct}% (${score}/10 acertos)`;
-            document.getElementById('certificado-section').style.display = 'block';
-            document.getElementById('form-dados-certificado').style.display = 'block';
-            document.getElementById('pix-section').style.display = 'none';
-        } else {
-            res.className = 'reprovado';
-            document.getElementById('result-text').innerHTML = `REPROVADO.<br>Nota: ${pct}% (${score}/10 acertos). Tente novamente.`;
-            document.getElementById('certificado-section').style.display = 'none';
-        }
-        res.scrollIntoView({ behavior: 'smooth' });
-    });
-
-    async function gerarCertificado() {
-        const nome = document.getElementById('aluno-nome').value;
-        const cpf = document.getElementById('aluno-cpf').value;
-        const nasc = document.getElementById('aluno-nascimento').value;
-        const contato = document.getElementById('aluno-contato').value;
-        
-        if(!nome || !cpf || !nasc || !contato) return alert("Preencha todos os campos!");
-
-        // Chamada da API do WhatsApp
-        try {
-            // Adicionado a Data de Nascimento no texto da mensagem
-            const textoMensagem = `Nome: ${nome}\nCPF: ${cpf}\nData de Nascimento: ${nasc}\nE-mail/telefone: ${contato}\nPorcentagem de acerto: ${porcentagemAtual}%\nSituação: Aprovado\nStatus: aguardando pagamento para envio do certificado`;
+    <!-- Modal do Carrinho -->
+    <div id="meuModal" class="modal">
+        <div class="modal-content" id="conteudo-modal">
+            <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+            <h2>Resumo do Pedido</h2>
             
-            // Alterado para HTTPS para evitar bloqueio de Mixed Content
-            const urlApi = `https://api.textmebot.com/send.php?recipient=+5522992195418&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(textoMensagem)}`;
+            <div id="itens-carrinho"><p style="color: #7f8c8d; font-size: 0.9em;">Nenhum item adicionado.</p></div>
             
-            await fetch(urlApi, { mode: 'no-cors' });
-        } catch (e) {
-            console.log("Erro ao notificar via WhatsApp", e);
+            <div class="resumo-valores">
+                <div class="linha-valor">
+                    <span>Subtotal:</span>
+                    <span id="valor-subtotal">R$ 0,00</span>
+                </div>
+                <div class="linha-valor destaque-desconto" id="linha-desconto" style="display: none;">
+                    <span>Desconto (30%):</span>
+                    <span id="valor-desconto">- R$ 0,00</span>
+                </div>
+                <div class="linha-valor">
+                    <span>Frete:</span>
+                    <span id="valor-frete">R$ 0,00</span>
+                </div>
+                <div class="linha-valor total">
+                    <span>Total a Pagar:</span>
+                    <span id="valor-total">R$ 0,00</span>
+                </div>
+            </div>
+
+            <h3>Dados para Entrega e Evento</h3>
+            <div class="form-group">
+                <label>Nome Completo</label>
+                <input type="text" id="cli-nome" placeholder="Seu nome">
+            </div>
+            <div class="form-group">
+                <label>WhatsApp</label>
+                <input type="text" id="cli-whats" placeholder="(22) 99999-9999">
+            </div>
+            
+            <div class="grid-2-cols">
+                <div class="form-group">
+                    <label>Data do Evento</label>
+                    <input type="date" id="cli-data">
+                </div>
+                <div class="form-group">
+                    <label>Horário de Início</label>
+                    <input type="time" id="cli-hora">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>CEP</label>
+                <input type="text" id="cli-cep" placeholder="28000-000" oninput="buscarCEP()">
+            </div>
+            <div class="form-group">
+                <label>Cidade</label>
+                <input type="text" id="cli-cidade" placeholder="Preencha o CEP primeiro" readonly>
+            </div>
+            <div class="form-group">
+                <label>Rua e Número</label>
+                <input type="text" id="cli-rua" placeholder="Ex: Rua Direita, 123">
+            </div>
+
+            <div class="form-group">
+                <label>Área de Entrega</label>
+                <select id="cli-area" onchange="calcularValores()">
+                    <option value="0">Retirar no local (Grátis)</option>
+                    <option value="0" disabled>Entrega: Preencha o CEP para calcular</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Forma de Pagamento</label>
+                <select id="cli-pagamento">
+                    <option value="100% Antecipado (PIX)">100% Antecipado via PIX agora</option>
+                    <option value="50% Agora e 50% na Entrega">Pagar 50% via PIX agora e 50% na entrega</option>
+                </select>
+            </div>
+            
+            <button class="btn-whats" onclick="enviarPedidoWhatsApp()">Finalizar Pedido</button>
+        </div>
+    </div>
+
+    <script>
+        // Função para aumentar ou diminuir a quantidade no card
+        function mudarQtd(idInput, valor) {
+            let input = document.getElementById(idInput);
+            let novaQtd = parseInt(input.value) + valor;
+            if(novaQtd >= 1) {
+                input.value = novaQtd;
+            }
         }
 
-        document.getElementById('form-dados-certificado').style.display = 'none';
-        document.getElementById('pix-section').style.display = 'block';
-    }
+        // Função do ViaCEP que busca o bairro/cidade com base SOMENTE no CEP
+        function buscarCEP() {
+            let cepInput = document.getElementById('cli-cep').value;
+            let cepLimpo = cepInput.replace(/\D/g, ''); 
+            
+            if (cepLimpo.length === 8) {
+                document.getElementById('cli-cidade').value = "Buscando...";
+                
+                fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.erro) {
+                            document.getElementById('cli-cidade').value = `${data.localidade} - ${data.uf}`;
+                            document.getElementById('cli-rua').value = `${data.logradouro},  - ${data.bairro}`;
+                            document.getElementById('subtitulo-cidade').innerText = `Catálogo Completo - ${data.localidade}`;
+                            
+                            const localEntrega = data.bairro ? data.bairro : data.localidade;
+                            
+                            const areaSelect = document.getElementById('cli-area');
+                            areaSelect.innerHTML = `
+                                <option value="0">Retirar no local (Grátis)</option>
+                                <option value="40" selected>Entrega em ${localEntrega} - R$ 40,00</option>
+                            `;
+                            
+                            calcularValores();
+                        } else {
+                            document.getElementById('cli-cidade').value = "CEP não encontrado";
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Erro ao buscar CEP", error);
+                        document.getElementById('cli-cidade').value = "";
+                    });
+            }
+        }
 
-    function copiarPix() {
-        const code = document.getElementById('pix-code');
-        code.select();
-        document.execCommand('copy');
-        alert('Código PIX copiado!');
-    }
-</script>
+        let carrinho = [];
+
+        const modal = document.getElementById("meuModal");
+        function abrirModal() { modal.style.display = "block"; }
+        function fecharModal() { modal.style.display = "none"; }
+        window.onclick = function(event) { if (event.target == modal) { fecharModal(); } }
+
+        function adicionarAoCarrinho(nome, preco, idInputQtd) {
+            let qtd = parseInt(document.getElementById(idInputQtd).value);
+            
+            let itemExistente = carrinho.find(item => item.nome === nome);
+            if (itemExistente) {
+                itemExistente.qtd += qtd;
+            } else {
+                carrinho.push({ nome, preco, qtd });
+            }
+            
+            let totalItens = carrinho.reduce((acc, item) => acc + item.qtd, 0);
+            document.getElementById('qtd-itens-badge').innerText = totalItens;
+            
+            atualizarCarrinhoHTML();
+            calcularValores();
+            
+            document.getElementById(idInputQtd).value = 1;
+
+            // ==========================================
+            // NOVA NOTIFICAÇÃO DE ADIÇÃO AO CARRINHO
+            // ==========================================
+            let msgNotificacao = `*ALERTA DE CARRINHO* 🛒\n\nUm cliente acabou de adicionar o seguinte item ao carrinho:\n✅ ${qtd}x ${nome}`;
+            let apiUrlNotificacao = `https://api.textmebot.com/send.php?recipient=+5522997069053&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(msgNotificacao)}`;
+            
+            fetch(apiUrlNotificacao)
+                .then(response => {
+                    console.log("Notificação de carrinho enviada!");
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar notificação de carrinho:", error);
+                });
+            // ==========================================
+        }
+
+        function atualizarCarrinhoHTML() {
+            const divItens = document.getElementById('itens-carrinho');
+            divItens.innerHTML = '';
+            
+            if (carrinho.length === 0) {
+                divItens.innerHTML = '<p style="color: #7f8c8d;">Nenhum item adicionado.</p>';
+            } else {
+                carrinho.forEach(item => {
+                    let totalItem = item.preco * item.qtd;
+                    divItens.innerHTML += `
+                        <div class="item-carrinho">
+                            <span>${item.qtd}x ${item.nome}</span>
+                            <span>R$ ${totalItem.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function calcularValores() {
+            let subtotal = carrinho.reduce((acc, item) => acc + (item.preco * item.qtd), 0);
+            let desconto = 0;
+            let frete = parseFloat(document.getElementById('cli-area').value) || 0;
+            let freteGratis = false;
+
+            if (subtotal >= 500 && frete > 0) {
+                frete = 0;
+                freteGratis = true;
+            }
+
+            if (subtotal >= 1500) {
+                desconto = subtotal * 0.30;
+                document.getElementById('linha-desconto').style.display = 'flex';
+            } else {
+                document.getElementById('linha-desconto').style.display = 'none';
+            }
+
+            let totalFinal = subtotal - desconto + frete;
+
+            document.getElementById('valor-subtotal').innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+            document.getElementById('valor-desconto').innerText = `- R$ ${desconto.toFixed(2).replace('.', ',')}`;
+            
+            if(freteGratis) {
+                document.getElementById('valor-frete').innerHTML = `<span style="color:#27ae60;font-weight:bold;">GRÁTIS</span>`;
+            } else {
+                document.getElementById('valor-frete').innerText = `R$ ${frete.toFixed(2).replace('.', ',')}`;
+            }
+            
+            document.getElementById('valor-total').innerText = `R$ ${totalFinal.toFixed(2).replace('.', ',')}`;
+            
+            return { subtotal, desconto, frete, freteGratis, totalFinal };
+        }
+
+        function formatarData(dataString) {
+            if(!dataString) return 'Não informada';
+            const partes = dataString.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function enviarPedidoWhatsApp() {
+            if (carrinho.length === 0) {
+                alert("Adicione produtos ao carrinho primeiro!");
+                return;
+            }
+
+            const nome = document.getElementById('cli-nome').value;
+            const rua = document.getElementById('cli-rua').value;
+            const whats = document.getElementById('cli-whats').value;
+            const dataEvento = document.getElementById('cli-data').value;
+            const horaEvento = document.getElementById('cli-hora').value;
+            const cep = document.getElementById('cli-cep').value;
+            const cidade = document.getElementById('cli-cidade').value;
+            const opcaoPagamento = document.getElementById('cli-pagamento').value;
+            
+            if (!nome || !rua || !cep) {
+                alert("Por favor, preencha seu Nome, CEP e Rua.");
+                return;
+            }
+
+            const areaSelect = document.getElementById('cli-area');
+            const areaNome = areaSelect.options[areaSelect.selectedIndex].text;
+            const valores = calcularValores();
+
+            let msg = `*NOVO PEDIDO DE ALUGUEL* 🥳\n\n`;
+            msg += `*Cliente:* ${nome}\n`;
+            msg += `*WhatsApp do Cliente:* ${whats}\n`;
+            msg += `*Data do Evento:* ${formatarData(dataEvento)} às ${horaEvento || 'Não informado'}\n`;
+            msg += `*Endereço:* ${rua}\n`;
+            msg += `*CEP:* ${cep}\n`;
+            msg += `*Cidade:* ${cidade}\n`;
+            msg += `*Opção de Entrega:* ${areaNome}\n\n`;
+            msg += `*Itens Selecionados:*\n`;
+            
+            carrinho.forEach(item => {
+                let totalItem = item.preco * item.qtd;
+                msg += `✅ ${item.qtd}x ${item.nome} - R$ ${totalItem.toFixed(2)}\n`;
+            });
+
+            msg += `\n*Subtotal:* R$ ${valores.subtotal.toFixed(2)}`;
+            if (valores.desconto > 0) msg += `\n*Desconto (30%):* - R$ ${valores.desconto.toFixed(2)}`;
+            if (valores.freteGratis) {
+                msg += `\n*Frete:* GRÁTIS 🎉`;
+            } else {
+                msg += `\n*Frete:* R$ ${valores.frete.toFixed(2)}`;
+            }
+            
+            msg += `\n\n*TOTAL:* R$ ${valores.totalFinal.toFixed(2)}`;
+            msg += `\n*Forma de Pagamento:* ${opcaoPagamento}`;
+            msg += `\n*Status:* pagamento pendente`;
+
+            // ==========================================
+            // ALTERAÇÃO DO NÚMERO DE DESTINO DO PEDIDO
+            // ==========================================
+            const apiUrl = `https://api.textmebot.com/send.php?recipient=+5522997069053&apikey=Pskn5LW4qaCv&text=${encodeURIComponent(msg)}`;
+            
+            fetch(apiUrl)
+                .then(response => {
+                    console.log("Mensagem enviada para a API com sucesso!");
+                })
+                .catch(error => {
+                    console.error("Erro ao enviar para a API:", error);
+                });
+
+            const conteudoModal = document.getElementById('conteudo-modal');
+            conteudoModal.innerHTML = `
+                <span class="fechar-modal" onclick="fecharModal()">&times;</span>
+                <div style="text-align: center; padding: 40px 15px;">
+                    <h2 style="color: #27ae60; font-size: 2em; margin-bottom: 10px;">✅ Pedido Concluído!</h2>
+                    <p style="font-size: 1.2em; color: #333; margin-bottom: 20px;">Seu pedido foi registrado com sucesso.</p>
+                    <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 5px solid #3498db; margin-bottom: 25px;">
+                        <p style="font-size: 1.1em; margin: 0; color: #2c3e50;">
+                            Você receberá o resumo do seu pedido e o <strong>código PIX</strong> pelo WhatsApp em instantes.
+                        </p>
+                    </div>
+                    <button class="btn-whats" style="width: 100%;" onclick="location.reload()">Voltar ao Catálogo</button>
+                </div>
+            `;
+        }
+    </script>
 </body>
 </html>
